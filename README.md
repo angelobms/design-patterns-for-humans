@@ -519,255 +519,278 @@ Quando o objeto necessário é similar ao objeto já existente ou quando a cria�
 <a name="singleton"></a>💍 Singleton
 ------------
 Exemplo do mundo real:
-> There can only be one president of a country at a time. The same president has to be brought to action, whenever duty calls. President here is singleton.
+> Um país só pode ter um presidente por vez. O mesmo presidente deve ser chamado sempre que o dever chama. O presidente aqui é o singleton.
 
 Em palavras simples:
-> Ensures that only one object of a particular class is ever created.
+> Certifica-se de que somente uma única instancia do objeto é criada **sempre**
 
 Wikipédia diz:
-> In software engineering, the singleton pattern is a software design pattern that restricts the instantiation of a class to one object. This is useful when exactly one object is needed to coordinate actions across the system.
+> Em engenharia de software, o padrão singleton é um padrão de design de software que restringe a instanciação de uma classe a um unico objeto. É útil quando exatamente um objeto é necessário para coordenar ações através do sistema.
 
-Singleton pattern is actually considered an anti-pattern and overuse of it should be avoided. It is not necessarily bad and could have some valid use-cases but should be used with caution because it introduces a global state in your application and change to it in one place could affect in the other areas and it could become pretty difficult to debug. The other bad thing about them is it makes your code tightly coupled plus it mocking the singleton could be difficult.
+O padrão singleton é, na verdade, considerado um anti-padrão, logo o uso excessivo dele deve ser evitado. Ele não é necessariamente ruim e pode até ter alguns casos de uso válidos, mas ainda sim deve ser utilizado com cuidado porque introduz um estado global na aplicação, e a alteração deste estado em um lugar pode afetar outras áreas da mesma. Isso torna o o código muito difícil de debugar. O outro problema com o singleton é que ele torna seu código muito fortemente acoplado, além disso, criar um *mock*<sup>[modelo de testes]</sup> pode ser um pouco difícil.
 
 **Exemplo programático**
 
-To create a singleton, make the constructor private, disable cloning, disable extension and create a static variable to house the instance
+Para criar um singleton, faça com que o construtor seja privado, desative a clonagem, desative a extensão e crie uma variável estática que vai armazenar a instância existente.
+
 ```php
-final class President
+final class Presidente
 {
-    private static $instance;
+    private static $instancia;
 
     private function __construct()
     {
-        // Hide the constructor
+        // Esconda o construtor
     }
 
-    public static function getInstance(): President
+    public static function obterInstancia(): Presidente
     {
-        if (!self::$instance) {
-            self::$instance = new self();
+        if (!self::$instancia) {
+            self::$instancia = new self();
         }
 
-        return self::$instance;
+        return self::$instancia;
     }
 
     private function __clone()
     {
-        // Disable cloning
+        // Desative a clonagem
     }
 
     private function __wakeup()
     {
-        // Disable unserialize
+        // Desative a desserialização
     }
 }
 ```
-Then in order to use
-```php
-$president1 = President::getInstance();
-$president2 = President::getInstance();
 
-var_dump($president1 === $president2); // true
+Então podemos usar:
+
+```php
+$presidente1 = Presidente::obterInstancia();
+$presidente2 = Presidente::obterInstancia();
+
+var_dump($presidente1 === $presidente2); // true
 ```
 
 <a name="estruturais"></a>Padrões de projeto estruturais
 ==========================
+
 Em palavras simples:
-> Structural patterns are mostly concerned with object composition or in other words how the entities can use each other. Or yet another explanation would be, they help in answering "How to build a software component?"
+
+> Padrões estruturais estão mais preocupados com a composição dos objetos, ou seja, como as entidades podem usar umas as outras. O até outra explicação poderia ser: Eles resolvem a pergunta de "como construir um componente de software?"
 
 Wikipédia diz:
-> In software engineering, structural design patterns are design patterns that ease the design by identifying a simple way to realize relationships between entities.
 
- * [Adapter](#-adapter)
- * [Bridge](#-bridge)
- * [Composite](#-composite)
- * [Decorator](#-decorator)
- * [Facade](#-facade)
+> Em engenharia de software, padrões de projeto estruturais são padrões de projeto que facilitam o design de um sistema identificando maneiras simples de criar relações entre entidades.
+
+ * [Adaptador](#adaptador)
+ * [Ponte](#ponte)
+ * [Composição](#composicao)
+ * [Decorador](#decorador)
+ * [Fachada](#fachada)
  * [Flyweight](#-flyweight)
  * [Proxy](#-proxy)
 
-🔌 Adapter
+<a name="adaptador"></a>🔌 Adaptador
 -------
+
 Exemplo do mundo real:
-> Consider that you have some pictures in your memory card and you need to transfer them to your computer. In order to transfer them you need some kind of adapter that is compatible with your computer ports so that you can attach memory card to your computer. In this case card reader is an adapter.
-> Another example would be the famous power adapter; a three legged plug can't be connected to a two pronged outlet, it needs to use a power adapter that makes it compatible with the two pronged outlet.
-> Yet another example would be a translator translating words spoken by one person to another
+
+>Considere que você tem algumas imagens no seu cartão de memória e você precisa transferir elas para seu computador. Para fazer isso você vai precisar de algum tipo de adaptador que é compatível com a porta de entrada do seu computador para que você possa ligar o seu cartão de memória a ele. Neste caso, o leitor de cartão é um adaptdador.
+
+> Um outro exemplo seria o famoso adaptador de tomadas. Uma tomada de três plugs não pode ser conectada, por exemplo, a uma saída de dois plugs, para isto é necessário utilizar um adaptador de tomadas que transforma o conector de três pontas em um conector de duas pontas.
+
+>Mais um exemplo ainda, seria um tradutor traduzindo palavras em uma lingua para outra entre duas pessoas de nacionalidades diferentes.
 
 Em palavras simples:
-> Adapter pattern lets you wrap an otherwise incompatible object in an adapter to make it compatible with another class.
+
+> Um adaptador permite que você encapsule objetos que seriam incompatíveis em um adaptador comum, de forma que eles possam se comunicar.
 
 Wikipédia diz:
-> In software engineering, the adapter pattern is a software design pattern that allows the interface of an existing class to be used as another interface. It is often used to make existing classes work with others without modifying their source code.
+
+> Em engenharia de software, o padrão adaptador é um padrão de projetos de design que permite que uma classe de uma classe existente seja usada como outra interface. É comumente utilizada para fazer com que classes existentes se conectem com outras classes novas sem modificar seu código fonte.
 
 **Exemplo programático**
 
-Consider a game where there is a hunter and he hunts lions.
+Imagine um jogo, aonde temos um caçador, e este caçador caça leões.
 
-First we have an interface `Lion` that all types of lions have to implement
+Primeiramente temos a interface `Leão` que todos os tipos de leões devem implementar.
 
 ```php
-interface Lion
+interface Leao
 {
-    public function roar();
+    public function rugir();
 }
 
-class AfricanLion implements Lion
+class LeaoAfricano implements Leao
 {
-    public function roar()
+    public function rugir()
     {
     }
 }
 
-class AsianLion implements Lion
+class LeaoAsiatico implements Leao
 {
-    public function roar()
-    {
-    }
-}
-```
-And hunter expects any implementation of `Lion` interface to hunt.
-```php
-class Hunter
-{
-    public function hunt(Lion $lion)
+    public function rugir()
     {
     }
 }
 ```
 
-Now let's say we have to add a `WildDog` in our game so that hunter can hunt that also. But we can't do that directly because dog has a different interface. To make it compatible for our hunter, we will have to create an adapter that is compatible
+E então o caçador vai esperar qualquer tipo de interface de `Leao` para poder caçar.
 
 ```php
-// This needs to be added to the game
-class WildDog
+class Cacador
 {
-    public function bark()
+    public function cacar(Leao $leao)
+    {
+    }
+}
+```
+
+Agora, imagine que vamos precisar adicionar um outro animal ao nosso jogo, digamos, um `CachorroSelvagem`, de forma que o caçador possa também caça-lo. Mas não podemos fazer isto diretamente porque o cachorro tem uma interface diferente. Para transformar em algo compatível com nosso caçador, vamos ter que criar uma adaptador.
+
+```php
+// Vamos precisar adicionar isso ao jogo
+class CachorroSelvagem
+{
+    public function latir()
     {
     }
 }
 
-// Adapter around wild dog to make it compatible with our game
-class WildDogAdapter implements Lion
+// Vamos criar um adaptador para o cachorro para transformar ele em algo compatível
+class CachorroSelvagemAdaptador implements Leao
 {
-    protected $dog;
+    protected $cachorro;
 
-    public function __construct(WildDog $dog)
+    public function __construct(CachorroSelvagem $cachorro)
     {
-        $this->dog = $dog;
+        $this->cachorro = $cachorro;
     }
 
-    public function roar()
+    public function rugir()
     {
-        $this->dog->bark();
+        //Note que sobrepomos a função rugir com o latido
+        $this->cachorro->latir();
     }
 }
 ```
-And now the `WildDog` can be used in our game using `WildDogAdapter`.
+
+Agora adicionamos o `CachorroSelvagem` no nosso jogo utilizando o `CachorroSelvagemAdaptador`
 
 ```php
-$wildDog = new WildDog();
-$wildDogAdapter = new WildDogAdapter($wildDog);
+$cachorroSelvagem = new CachorroSelvagem();
+$cachorroSelvagemAdaptador = new CachorroSelvagemAdaptador($cachorroSelvagem);
 
-$hunter = new Hunter();
-$hunter->hunt($wildDogAdapter);
+$cacador = new Cacador();
+$cacador->cacar($cachorroSelvagemAdaptador); //Implementa a interface Leao
 ```
 
-🚡 Bridge
+<a name="ponte"></a>🚡 Ponte
 ------
+
 Exemplo do mundo real:
-> Consider you have a website with different pages and you are supposed to allow the user to change the theme. What would you do? Create multiple copies of each of the pages for each of the themes or would you just create separate theme and load them based on the user's preferences? Bridge pattern allows you to do the second i.e.
 
-![With and without the bridge pattern](https://cloud.githubusercontent.com/assets/11269635/23065293/33b7aea0-f515-11e6-983f-98823c9845ee.png)
+> Considere que você tenha um site com diferentes paginas e você deve permitir que o usuário mude o tema destas páginas. O que você faria? Criaria multiplas cópias de cada página para cada tema existente ou simplesmente criaria um tema separado e carregaria ele como um módulo em cada página baseado nas preferências de usuário? O padrão ponte permite que você faça o segundo.
 
-In Plain Words
-> Bridge pattern is about preferring composition over inheritance. Implementation details are pushed from a hierarchy to another object with a separate hierarchy.
+![Com e sem o padrão ponte](ponte.png)
+
+Em palavras simples
+
+> O padrão ponte é sobre preferir a composição de objetos ao invés de herança. Detalhes de implementação são passados de uma hierarquia a outro objeto com uma hierarquia separada.
 
 Wikipédia diz:
-> The bridge pattern is a design pattern used in software engineering that is meant to "decouple an abstraction from its implementation so that the two can vary independently"
+
+> O padrão ponte é um padrão de projetos utilizado em engenharia de software com o objetivo de "desacoplar uma abstratção de sua implementação, de forma que ambas possam variar independentemente".
 
 **Exemplo programático**
 
-Translating our WebPage example from above. Here we have the `WebPage` hierarchy
+Traduzindo nosso exemplo acima, aqui temos a nossa hierarquia para `PaginaWeb`:
 
 ```php
-interface WebPage
+interface PaginaWeb
 {
-    public function __construct(Theme $theme);
-    public function getContent();
+    public function __construct(Tema $tema);
+    public function obterConteudo();
 }
 
-class About implements WebPage
+class Sobre implements PaginaWeb
 {
-    protected $theme;
+    protected $tema;
 
-    public function __construct(Theme $theme)
+    public function __construct(Tema $tema)
     {
-        $this->theme = $theme;
+        $this->tema = $tema;
     }
 
-    public function getContent()
+    public function obterConteudo()
     {
-        return "About page in " . $this->theme->getColor();
+        return "Página sobre em " . $this->tema->obterCor();
     }
 }
 
-class Careers implements WebPage
+class Carreiras implements PaginaWeb
 {
-    protected $theme;
+    protected $tema;
 
-    public function __construct(Theme $theme)
+    public function __construct(Tema $tema)
     {
-        $this->theme = $theme;
+        $this->tema = $tema;
     }
 
-    public function getContent()
+    public function obterConteudo()
     {
-        return "Careers page in " . $this->theme->getColor();
+        return "Página carreiras em " . $this->tema->obterCor();
     }
 }
 ```
-And the separate theme hierarchy
+E ai temos nossa hierarquia separada para o tema:
+
 ```php
 
-interface Theme
+interface Tema
 {
-    public function getColor();
+    public function obterCor();
 }
 
-class DarkTheme implements Theme
+class TemaEscuro implements Tema
 {
-    public function getColor()
+    public function obterCor()
     {
-        return 'Dark Black';
+        return 'Preto';
     }
 }
-class LightTheme implements Theme
+class TemaClaro implements Tema
 {
-    public function getColor()
+    public function obterCor()
     {
-        return 'Off white';
+        return 'Branco';
     }
 }
-class AquaTheme implements Theme
+class TemaAqua implements Tema
 {
-    public function getColor()
+    public function obterCor()
     {
-        return 'Light blue';
+        return 'Azul claro';
     }
 }
 ```
-And both the hierarchies
+
+Agora podemos juntar as duas herarquias
+
 ```php
-$darkTheme = new DarkTheme();
+$temaEscuro = new TemaEscuro();
 
-$about = new About($darkTheme);
-$careers = new Careers($darkTheme);
+$sobre = new Sobre($temaEscuro);
+$carreiras = new Carreiras($temaEscuro);
 
-echo $about->getContent(); // "About page in Dark Black";
-echo $careers->getContent(); // "Careers page in Dark Black";
+echo $sobre->obterConteudo(); // "Página sobre em Preto";
+echo $carreiras->obterConteudo(); // "Página carreiras em Preto";
 ```
 
-🌿 Composite
+<a name="composicao"></a>🌿 Composite
 -----------------
 
 Exemplo do mundo real:
@@ -898,7 +921,7 @@ $organization->addEmployee($jane);
 echo "Net salaries: " . $organization->getNetSalaries(); // Net Salaries: 22000
 ```
 
-☕ Decorator
+<a name="decorador"></a>☕ Decorador
 -------------
 
 Exemplo do mundo real:
@@ -1018,7 +1041,7 @@ echo $someCoffee->getCost(); // 20
 echo $someCoffee->obterDescricao(); // Simple Coffee, milk, whip, vanilla
 ```
 
-📦 Facade
+<a name="fachada"></a>📦 Fachada
 ----------------
 
 Exemplo do mundo real:
@@ -1710,7 +1733,7 @@ class EditorMemento
         $this->content = $content;
     }
 
-    public function getContent()
+    public function obterConteudo()
     {
         return $this->content;
     }
@@ -1729,7 +1752,7 @@ class Editor
         $this->content = $this->content . ' ' . $words;
     }
 
-    public function getContent()
+    public function obterConteudo()
     {
         return $this->content;
     }
@@ -1741,7 +1764,7 @@ class Editor
 
     public function restore(EditorMemento $memento)
     {
-        $this->content = $memento->getContent();
+        $this->content = $memento->obterConteudo();
     }
 }
 ```
@@ -1762,12 +1785,12 @@ $saved = $editor->save();
 $editor->type('And this is third.');
 
 // Output: Content before Saving
-echo $editor->getContent(); // This is the first sentence. This is second. And this is third.
+echo $editor->obterConteudo(); // This is the first sentence. This is second. And this is third.
 
 // Restoring to last saved state
 $editor->restore($saved);
 
-$editor->getContent(); // This is the first sentence. This is second.
+$editor->obterConteudo(); // This is the first sentence. This is second.
 ```
 
 😎 Observer
