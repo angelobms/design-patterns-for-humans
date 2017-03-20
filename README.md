@@ -790,135 +790,138 @@ echo $sobre->obterConteudo(); // "Página sobre em Preto";
 echo $carreiras->obterConteudo(); // "Página carreiras em Preto";
 ```
 
-<a name="composicao"></a>🌿 Composite
+<a name="composicao"></a>🌿 Composição
 -----------------
 
 Exemplo do mundo real:
-> Every organization is composed of employees. Each of the employees has the same features i.e. has a salary, has some responsibilities, may or may not report to someone, may or may not have some subordinates etc.
+
+> Toda organização é composta de funcionários. Cada funcionário tem as masmas características, por exemplo, um salário, algumas responsabilidades, podem ou não se reportar a alguém, podem ou não ter subordinados, etc.
 
 Em palavras simples:
-> Composite pattern lets clients treat the individual objects in a uniform manner.
+
+> O padrão de composição permite que os clientes tratem os objetos individuais de uma forma uniforme.
 
 Wikipédia diz:
-> In software engineering, the composite pattern is a partitioning design pattern. The composite pattern describes that a group of objects is to be treated in the same way as a single instance of an object. The intent of a composite is to "compose" objects into tree structures to represent part-whole hierarchies. Implementing the composite pattern lets clients treat individual objects and compositions uniformly.
+
+> Em engenharia de software, o padrão de composição é um padrão de projeto de particionamento. A composição descreve que um grupo de objetos deve ser tratado da mesma forma que uma instancia única de um objeto. A intenção de uma composição é "compor" objetos em estruturas de árvores para representar hierarquias. Implementar o padrão de composição permite que clientes tratem objetos individuais e composições uniformemente.
 
 **Exemplo programático**
 
-Taking our employees example from above. Here we have different employee types
+Usando o exemplo de funcionários acima. Vamos criar nossa interface de empregados:
 
 ```php
-interface Employee
+interface Funcionario
 {
-    public function __construct(string $name, float $salary);
-    public function getName(): string;
-    public function setSalary(float $salary);
-    public function getSalary(): float;
-    public function getRoles(): array;
+    public function __construct(string $nome, float $salario);
+    public function obterNome(): string;
+    public function setarSalario(float $salario);
+    public function obterSalario(): float;
+    public function obterCargo(): array;
 }
 
-class Developer implements Employee
+class Deselvolvedor implements Funcionario
 {
-    protected $salary;
-    protected $name;
+    protected $salario;
+    protected $nome;
 
-    public function __construct(string $name, float $salary)
+    public function __construct(string $nome, float $salario)
     {
-        $this->name = $name;
-        $this->salary = $salary;
+        $this->nome = $nome;
+        $this->salario = $salario;
     }
 
-    public function getName(): string
+    public function obterNome(): string
     {
-        return $this->name;
+        return $this->nome;
     }
 
-    public function setSalary(float $salary)
+    public function setarSalario(float $salario)
     {
-        $this->salary = $salary;
+        $this->salario = $salario;
     }
 
-    public function getSalary(): float
+    public function obterSalario(): float
     {
-        return $this->salary;
+        return $this->salario;
     }
 
-    public function getRoles(): array
+    public function obterCargo(): array
     {
         return $this->roles;
     }
 }
 
-class Designer implements Employee
+class Designer implements Funcionario
 {
-    protected $salary;
-    protected $name;
+    protected $salario;
+    protected $nome;
 
-    public function __construct(string $name, float $salary)
+    public function __construct(string $nome, float $salario)
     {
-        $this->name = $name;
-        $this->salary = $salary;
+        $this->nome = $nome;
+        $this->salario = $salario;
     }
 
-    public function getName(): string
+    public function obterNome(): string
     {
-        return $this->name;
+        return $this->nome;
     }
 
-    public function setSalary(float $salary)
+    public function setarSalario(float $salario)
     {
-        $this->salary = $salary;
+        $this->salario = $salario;
     }
 
-    public function getSalary(): float
+    public function obterSalario(): float
     {
-        return $this->salary;
+        return $this->salario;
     }
 
-    public function getRoles(): array
+    public function obterCargo(): array
     {
         return $this->roles;
     }
 }
 ```
 
-Then we have an organization which consists of several different types of employees
+Então temos nossa organização, que possui uma série de empregados:
 
 ```php
-class Organization
+class Organizacao
 {
-    protected $employees;
+    protected $funcionarios;
 
-    public function addEmployee(Employee $employee)
+    public function adicionarFuncionario(Funcionario $funcionario)
     {
-        $this->employees[] = $employee;
+        $this->funcionarios[] = $funcionario;
     }
 
-    public function getNetSalaries(): float
+    public function obterSalarios(): float
     {
-        $netSalary = 0;
+        $salarioLiquido = 0;
 
-        foreach ($this->employees as $employee) {
-            $netSalary += $employee->getSalary();
+        foreach ($this->funcionarios as $funcionario) {
+            $salarioLiquido += $funcionario->obterSalario();
         }
 
-        return $netSalary;
+        return $salarioLiquido;
     }
 }
 ```
 
-And then it can be used as
+Então podemos usar assim:
 
 ```php
-// Prepare the employees
-$john = new Developer('John Doe', 12000);
+// Preparamos os desenvolvedores
+$john = new Deselvolvedor('John Doe', 12000);
 $jane = new Designer('Jane', 10000);
 
-// Add them to organization
-$organization = new Organization();
-$organization->addEmployee($john);
-$organization->addEmployee($jane);
+// Adicionamos a uma organização
+$empresa = new Organization();
+$empresa->adicionarFuncionario($john);
+$empresa->adicionarFuncionario($jane);
 
-echo "Net salaries: " . $organization->getNetSalaries(); // Net Salaries: 22000
+echo "Salários liquidos: " . $empresa->obterSalarios(); // Salários liquidos: 22000
 ```
 
 <a name="decorador"></a>☕ Decorador
@@ -926,229 +929,241 @@ echo "Net salaries: " . $organization->getNetSalaries(); // Net Salaries: 22000
 
 Exemplo do mundo real:
 
-> Imagine you run a car service shop offering multiple services. Now how do you calculate the bill to be charged? You pick one service and dynamically keep adding to it the prices for the provided services till you get the final cost. Here each type of service is a decorator.
+> Imagine que você possui uma oficina mecânica, que oferece diversos tipos de serviços. Agora como você calcula o preço total da conta? Você pega um serviço e dinamicamente adiciona os preços dos serviços subsequentes até você ter o custo final. Neste caso, cada tipo de serviço é um decorador.
 
 Em palavras simples:
-> Decorator pattern lets you dynamically change the behavior of an object at run time by wrapping them in an object of a decorator class.
+
+> O padrão decorador permite que você dinamicamente altere o comportamento de um objeto em tempo de execução encapsulando todos em um objeto de decoração.
 
 Wikipédia diz:
-> In object-oriented programming, the decorator pattern is a design pattern that allows behavior to be added to an individual object, either statically or dynamically, without affecting the behavior of other objects from the same class. The decorator pattern is often useful for adhering to the Single Responsibility Principle, as it allows functionality to be divided between classes with unique areas of concern.
+
+> Em programação orientada a objetos (POO), o padrão decorador é um padrão de projetos que permite que um comportamento seja adicionado a um objeto individual, tanto dinamica quanto estaticamente, sem afetar o comportamento de outros objetos da mesma classe. O decorador é bastante útil para aderir ao Princípio de Responsabilidade Única, pois permite que a funcionalidade seja dividida entre as classes com áreas de responsabilidade únicas.
 
 **Exemplo programático**
 
-Lets take coffee for example. First of all we have a simple coffee implementing the coffee interface
+Vamos imaginar um café. Primeiramente temos um café simples, implementando uma interface de café:
 
 ```php
-interface Coffee
+interface Cafe
 {
-    public function getCost();
+    public function obterCusto();
     public function obterDescricao();
 }
 
-class SimpleCoffee implements Coffee
+class CafeSimples implements Cafe
 {
-    public function getCost()
+    public function obterCusto()
     {
         return 10;
     }
 
     public function obterDescricao()
     {
-        return 'Simple coffee';
-    }
-}
-```
-We want to make the code extensible to allow options to modify it if required. Lets make some add-ons (decorators)
-```php
-class MilkCoffee implements Coffee
-{
-    protected $coffee;
-
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
-    }
-
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 2;
-    }
-
-    public function obterDescricao()
-    {
-        return $this->coffee->obterDescricao() . ', milk';
-    }
-}
-
-class WhipCoffee implements Coffee
-{
-    protected $coffee;
-
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
-    }
-
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 5;
-    }
-
-    public function obterDescricao()
-    {
-        return $this->coffee->obterDescricao() . ', whip';
-    }
-}
-
-class VanillaCoffee implements Coffee
-{
-    protected $coffee;
-
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
-    }
-
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 3;
-    }
-
-    public function obterDescricao()
-    {
-        return $this->coffee->obterDescricao() . ', vanilla';
+        return 'Café simples';
     }
 }
 ```
 
-Lets make a coffee now
+Queremos fazer com que este código seja estensível para permitir opções de modificações no café. Vamos fazer alguns add-ons (decoradores):
 
 ```php
-$someCoffee = new SimpleCoffee();
-echo $someCoffee->getCost(); // 10
-echo $someCoffee->obterDescricao(); // Simple Coffee
+class CafeComLeite implements Cafe
+{
+    protected $cafe;
 
-$someCoffee = new MilkCoffee($someCoffee);
-echo $someCoffee->getCost(); // 12
-echo $someCoffee->obterDescricao(); // Simple Coffee, milk
+    public function __construct(Cafe $cafe)
+    {
+        $this->cafe = $cafe;
+    }
 
-$someCoffee = new WhipCoffee($someCoffee);
-echo $someCoffee->getCost(); // 17
-echo $someCoffee->obterDescricao(); // Simple Coffee, milk, whip
+    public function obterCusto()
+    {
+        return $this->cafe->obterCusto() + 2;
+    }
 
-$someCoffee = new VanillaCoffee($someCoffee);
-echo $someCoffee->getCost(); // 20
-echo $someCoffee->obterDescricao(); // Simple Coffee, milk, whip, vanilla
+    public function obterDescricao()
+    {
+        return $this->cafe->obterDescricao() . ', leite';
+    }
+}
+
+class CafeBatido implements Cafe
+{
+    protected $cafe;
+
+    public function __construct(Cafe $cafe)
+    {
+        $this->cafe = $cafe;
+    }
+
+    public function obterCusto()
+    {
+        return $this->cafe->obterCusto() + 5;
+    }
+
+    public function obterDescricao()
+    {
+        return $this->cafe->obterDescricao() . ', batido';
+    }
+}
+
+class CafeComBaunilha implements Cafe
+{
+    protected $cafe;
+
+    public function __construct(Cafe $cafe)
+    {
+        $this->cafe = $cafe;
+    }
+
+    public function obterCusto()
+    {
+        return $this->cafe->obterCusto() + 3;
+    }
+
+    public function obterDescricao()
+    {
+        return $this->cafe->obterDescricao() . ', baunilha';
+    }
+}
+```
+
+Vamos fazer nosso café agora:
+
+```php
+$umCafe = new CafeSimples();
+echo $umCafe->obterCusto(); // 10
+echo $umCafe->obterDescricao(); // Café simples
+
+$umCafe = new CafeComLeite($umCafe);
+echo $umCafe->obterCusto(); // 12
+echo $umCafe->obterDescricao(); // Café simples, leite
+
+$umCafe = new CafeBatido($umCafe);
+echo $umCafe->obterCusto(); // 17
+echo $umCafe->obterDescricao(); // Café simples, leite, batido
+
+$umCafe = new CafeComBaunilha($umCafe);
+echo $umCafe->obterCusto(); // 20
+echo $umCafe->obterDescricao(); // Café simples, leite, batido, baunilha
 ```
 
 <a name="fachada"></a>📦 Fachada
 ----------------
 
 Exemplo do mundo real:
-> How do you turn on the computer? "Hit the power button" you say! That is what you believe because you are using a simple interface that computer provides on the outside, internally it has to do a lot of stuff to make it happen. This simple interface to the complex subsystem is a facade.
+
+> Como você liga seu computador? "Aperto o botão de ligar", você vai dizer, certo? Isto que você acredita porque você está usando uma interface simples que o computador provê do lado de fora, internamente ele precisa fazer muito mais coisas para isto acontecer. A interface simples para um subsistema complexo é a fachada.
 
 Em palavras simples:
-> Facade pattern provides a simplified interface to a complex subsystem.
+
+> O padrão de fachada provê uma interface simplificada para um subsistema complexo.
 
 Wikipédia diz:
-> A facade is an object that provides a simplified interface to a larger body of code, such as a class library.
+
+> A fachada é um objeto que provê uma interface simplificada para um corpo de código maior, como uma biblioteca.
 
 **Exemplo programático**
 
-Taking our computer example from above. Here we have the computer class
+Vamos usar nosso exemplo do computador. Primeiro, implementamos nossa interface do computador:
 
 ```php
-class Computer
+class Computador
 {
-    public function getElectricShock()
+    public function levarChoque()
     {
         echo "Ouch!";
     }
 
-    public function makeSound()
+    public function fazerSom()
     {
         echo "Beep beep!";
     }
 
-    public function showLoadingScreen()
+    public function mostrarTelaLoading()
     {
-        echo "Loading..";
+        echo "Carregando...";
     }
 
-    public function bam()
+    public function pronto()
     {
-        echo "Ready to be used!";
+        echo "Pronto para usar!";
     }
 
-    public function closeEverything()
+    public function fecharTudo()
     {
         echo "Bup bup bup buzzzz!";
     }
 
-    public function sooth()
+    public function desligar()
     {
         echo "Zzzzz";
     }
 
-    public function pullCurrent()
+    public function puxarCorrente()
     {
         echo "Haaah!";
     }
 }
 ```
+
 Here we have the facade
+
 ```php
-class ComputerFacade
+class ComputadorFachada
 {
-    protected $computer;
+    protected $computador;
 
-    public function __construct(Computer $computer)
+    public function __construct(Computador $computador)
     {
-        $this->computer = $computer;
+        $this->computador = $computador;
     }
 
-    public function turnOn()
+    public function ligar()
     {
-        $this->computer->getElectricShock();
-        $this->computer->makeSound();
-        $this->computer->showLoadingScreen();
-        $this->computer->bam();
+        $this->computador->levarChoque();
+        $this->computador->fazerSom();
+        $this->computador->mostrarTelaLoading();
+        $this->computador->pronto();
     }
 
-    public function turnOff()
+    public function desligar()
     {
-        $this->computer->closeEverything();
-        $this->computer->pullCurrent();
-        $this->computer->sooth();
+        $this->computador->fecharTudo();
+        $this->computador->puxarCorrente();
+        $this->computador->desligar();
     }
 }
 ```
 Now to use the facade
 ```php
-$computer = new ComputerFacade(new Computer());
-$computer->turnOn(); // Ouch! Beep beep! Loading.. Ready to be used!
-$computer->turnOff(); // Bup bup buzzz! Haah! Zzzzz
+$computador = new ComputadorFachada(new Computador());
+$computador->ligar(); // Ouch! Beep beep! Carregando... Pronto para usar!
+$computador->desligar(); // Bup bup buzzz! Haah! Zzzzz
 ```
 
 🍃 Flyweight
 ---------
 
 Exemplo do mundo real:
-> Did you ever have fresh tea from some stall? They often make more than one cup that you demanded and save the rest for any other customer so to save the resources e.g. gas etc. Flyweight pattern is all about that i.e. sharing.
+
+> Você já tomou algum chá gelado de algum quiosque? Eles sempre fazem mais do que uma taça e guardam o resto para qualquer outro cliente, então, para guardar recursos, por exemplo, gás, agua e etc. O padrão FlyWeight é somente sobre isso, compartilhamento.
 
 Em palavras simples:
-> It is used to minimize memory usage or computational expenses by sharing as much as possible with similar objects.
+
+> É utilizado para minimizar o uso de memória ou recursos computacionais através de compartilhamento com outros objetos similares.
 
 Wikipédia diz:
-> In computer programming, flyweight is a software design pattern. A flyweight is an object that minimizes memory use by sharing as much data as possible with other similar objects; it is a way to use objects in large numbers when a simple repeated representation would use an unacceptable amount of memory.
+
+> Em programação de computadores, flyweight é um padrão de desenvolvimento de software. Um flyweight é um objeto que minimiza o uso de memória através do compartilhamento do máximo possível de dados com outros objetos similares; É uma forma de usar objetos em grandes números quando uma representação simples e repetitiva usaria uma quantidade de memória inaceitável.
 
 **Programmatic example**
 
-Translating our tea example from above. First of all we have tea types and tea maker
+Traduzindo o exemplo. Primeiramente temos nossas implementações do chá e do cozinheiro.
 
 ```php
-// Anything that will be cached is flyweight.
-// Types of tea here will be flyweights.
+// Qualquer coisa que for cacheada é um flyweight.
+// Aqui, os tipos de chá serão os flyweights
 class KarakTea
 {
 }
@@ -1430,12 +1445,12 @@ First of all we have the receiver that has the implementation of every action th
 // Receiver
 class Bulb
 {
-    public function turnOn()
+    public function ligar()
     {
         echo "Bulb has been lit";
     }
 
-    public function turnOff()
+    public function desligar()
     {
         echo "Darkness!";
     }
@@ -1467,7 +1482,7 @@ class TurnOn implements Command
 
     public function undo()
     {
-        $this->bulb->turnOff();
+        $this->bulb->desligar();
     }
 
     public function redo()
@@ -1476,7 +1491,7 @@ class TurnOn implements Command
     }
 }
 
-class TurnOff implements Command
+class desligar implements Command
 {
     protected $bulb;
 
@@ -1487,7 +1502,7 @@ class TurnOff implements Command
 
     public function execute()
     {
-        $this->bulb->turnOff();
+        $this->bulb->desligar();
     }
 
     public function undo()
@@ -1517,11 +1532,11 @@ Finally let's see how we can use it in our client
 $bulb = new Bulb();
 
 $turnOn = new TurnOn($bulb);
-$turnOff = new TurnOff($bulb);
+$desligar = new desligar($bulb);
 
 $remote = new RemoteControl();
 $remote->submit($turnOn); // Bulb has been lit!
-$remote->submit($turnOff); // Darkness!
+$remote->submit($desligar); // Darkness!
 ```
 
 Command pattern can also be used to implement a transaction based system. Where you keep maintaining the history of commands as soon as you execute them. If the final command is successfully executed, all good otherwise just iterate through the history and keep executing the `undo` on all the executed commands.
@@ -1662,7 +1677,7 @@ class ChatRoom implements ChatRoomMediator
     public function showMessage(User $user, string $message)
     {
         $time = date('M d, y H:i');
-        $sender = $user->getName();
+        $sender = $user->obterNome();
 
         echo $time . '[' . $sender . ']:' . $message;
     }
@@ -1672,16 +1687,16 @@ class ChatRoom implements ChatRoomMediator
 Then we have our users i.e. colleagues
 ```php
 class User {
-    protected $name;
+    protected $nome;
     protected $chatMediator;
 
-    public function __construct(string $name, ChatRoomMediator $chatMediator) {
-        $this->name = $name;
+    public function __construct(string $nome, ChatRoomMediator $chatMediator) {
+        $this->nome = $nome;
         $this->chatMediator = $chatMediator;
     }
 
-    public function getName() {
-        return $this->name;
+    public function obterNome() {
+        return $this->nome;
     }
 
     public function send($message) {
@@ -1825,17 +1840,17 @@ class JobPost
 
 class JobSeeker implements Observer
 {
-    protected $name;
+    protected $nome;
 
-    public function __construct(string $name)
+    public function __construct(string $nome)
     {
-        $this->name = $name;
+        $this->nome = $nome;
     }
 
     public function onJobPosted(JobPost $job)
     {
         // Do something with the job posting
-        echo 'Hi ' . $this->name . '! New job posted: '. $job->getTitle();
+        echo 'Hi ' . $this->nome . '! New job posted: '. $job->getTitle();
     }
 }
 ```
@@ -2031,7 +2046,7 @@ Em palavras simples:
 > Strategy pattern allows you to switch the algorithm or strategy based upon the situation.
 
 Wikipédia diz:
-> In computer programming, the strategy pattern (also known as the policy pattern) is a behavioural software design pattern that enables an algorithm's behavior to be selected at runtime.
+> In Computador programming, the strategy pattern (also known as the policy pattern) is a behavioural software design pattern that enables an algorithm's behavior to be selected at runtime.
 
 **Programmatic example**
 
