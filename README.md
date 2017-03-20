@@ -447,74 +447,74 @@ Quando um objeto pode ter diversos "sabores" e para evitar o anti-padrão de con
 - A fábrica deve ser usada quando o processo de criação tem apenas um passo.
 - O construtor é justamente o oposto, ele funciona muito melhor quando o processo de criação é composto de vários passos.
 
-<a name="prototipo"></a>🐑 Prototype
+<a name="prototipo"></a>🐑 Protótipo
 ------------
 Exemplo do mundo real:
-> Remember dolly? The sheep that was cloned! Lets not get into the details but the key point here is that it is all about cloning
+> Lembra da Dolly? Aquela ovelha que foi clonada? Não vamos entrar nos detalhes aqui, mas o ponto chave é que isso é tudo sobre clonagem.
 
 Em palavras simples:
-> Create object based on an existing object through cloning.
+> Cria um objeto baseado em outro através da clonagem
 
 Wikipédia diz:
-> The prototype pattern is a creational design pattern in software development. It is used when the type of objects to create is determined by a prototypical instance, which is cloned to produce new objects.
+> O padrão protótipo é um padrão de projeto criacional em desenvolvimento de software. É usado quando o tipo dos objetos a serem criados é determinado por uma instancia modelo, ou protótipo, que é clonada para produzir novos objetos.
 
-In short, it allows you to create a copy of an existing object and modify it to your needs, instead of going through the trouble of creating an object from scratch and setting it up.
+In suma, permite que você crie uma cópia de um objeto existente e modifique-o de acordo com suas necessidades. Ao invés de ter todo o problema de criar um objeto novo do zero e configurá-lo.
 
 **Exemplo programático**
 
-In PHP, it can be easily done using `clone`
+Em PHP, isso pode ser facilmente feito com o  `clone`
 
 ```php
-class Sheep
+class Ovelha
 {
-    protected $name;
-    protected $category;
+    protected $nome;
+    protected $categoria;
 
-    public function __construct(string $name, string $category = 'Mountain Sheep')
+    public function __construct(string $nome, string $categoria = 'Ovelha da montanha')
     {
-        $this->name = $name;
-        $this->category = $category;
+        $this->nome = $nome;
+        $this->categoria = $categoria;
     }
 
-    public function setName(string $name)
+    public function setNome(string $nome)
     {
-        $this->name = $name;
+        $this->nome = $nome;
     }
 
-    public function getName()
+    public function getNome()
     {
-        return $this->name;
+        return $this->nome;
     }
 
-    public function setCategory(string $category)
+    public function setCategoria(string $categoria)
     {
-        $this->category = $category;
+        $this->categoria = $categoria;
     }
 
-    public function getCategory()
+    public function getCategoria()
     {
-        return $this->category;
+        return $this->categoria;
     }
 }
 ```
-Then it can be cloned like below
+Então podemos clonar como abaixo:
 ```php
-$original = new Sheep('Jolly');
-echo $original->getName(); // Jolly
-echo $original->getCategory(); // Mountain Sheep
+$original = new Ovelha('Jolly');
+echo $original->getNome(); // Jolly
+echo $original->getCategoria(); // Ovelha da montanha
 
-// Clone and modify what is required
-$cloned = clone $original;
-$cloned->setName('Dolly');
-echo $cloned->getName(); // Dolly
-echo $cloned->getCategory(); // Mountain sheep
+// Clonamos e modificamos o que for necessário
+$clone = clone $original;
+$clone->setNome('Dolly');
+echo $clone->getNome(); // Dolly
+echo $clone->getCategoria(); // Ovelha da montanha
 ```
 
-Also you could use the magic method `__clone` to modify the cloning behavior.
+Você pode também usar o *magic method* `__clone` para modificar o comportamento da clonagem.
 
 **Quando usar?**
 
-When an object is required that is similar to existing object or when the creation would be expensive as compared to cloning.
+Quando o objeto necessário é similar ao objeto já existente ou quando a criação seria muito cara comparada com a clonagem.
 
 <a name="singleton"></a>💍 Singleton
 ------------
