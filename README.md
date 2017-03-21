@@ -1157,55 +1157,55 @@ Wikipédia diz:
 
 > Em programação de computadores, flyweight é um padrão de desenvolvimento de software. Um flyweight é um objeto que minimiza o uso de memória através do compartilhamento do máximo possível de dados com outros objetos similares; É uma forma de usar objetos em grandes números quando uma representação simples e repetitiva usaria uma quantidade de memória inaceitável.
 
-**Programmatic example**
+**Exemplo programático**
 
 Traduzindo o exemplo. Primeiramente temos nossas implementações do chá e do cozinheiro.
 
 ```php
 // Qualquer coisa que for cacheada é um flyweight.
 // Aqui, os tipos de chá serão os flyweights
-class KarakTea
+class ChaKarak
 {
 }
 
-// Acts as a factory and saves the tea
-class TeaMaker
+// Age como uma fábrica, salva o chá
+class Cozinheiro
 {
-    protected $availableTea = [];
+    protected $chaDisponivel = [];
 
-    public function make($preference)
+    public function fazer($preferencia)
     {
-        if (empty($this->availableTea[$preference])) {
-            $this->availableTea[$preference] = new KarakTea();
+        if (empty($this->chaDisponivel[$preferencia])) {
+            $this->chaDisponivel[$preferencia] = new ChaKarak();
         }
 
-        return $this->availableTea[$preference];
+        return $this->chaDisponivel[$preferencia];
     }
 }
 ```
 
-Then we have the `TeaShop` which takes orders and serves them
+Agora temos a nossa `LojaCha` que pega os pedidos e os serve.
 
 ```php
-class TeaShop
+class LojaCha
 {
-    protected $orders;
-    protected $teaMaker;
+    protected $pedidos;
+    protected $cozinheiro;
 
-    public function __construct(TeaMaker $teaMaker)
+    public function __construct(Cozinheiro $cozinheiro)
     {
-        $this->teaMaker = $teaMaker;
+        $this->cozinheiro = $cozinheiro;
     }
 
-    public function takeOrder(string $teaType, int $table)
+    public function pegarPedido(string $tipoCha, int $mesa)
     {
-        $this->orders[$table] = $this->teaMaker->make($teaType);
+        $this->pedidos[$mesa] = $this->cozinheiro->fazer($tipoCha);
     }
 
-    public function serve()
+    public function servir()
     {
-        foreach ($this->orders as $table => $tea) {
-            echo "Serving tea to table# " . $table;
+        foreach ($this->pedidos as $mesa => $cha) {
+            echo "Servindo chá para mesa #" . $mesa;
         }
     }
 }
@@ -1213,401 +1213,432 @@ class TeaShop
 And it can be used as below
 
 ```php
-$teaMaker = new TeaMaker();
-$shop = new TeaShop($teaMaker);
+$cozinheiro = new Cozinheiro();
+$loja = new LojaCha($cozinheiro);
 
-$shop->takeOrder('less sugar', 1);
-$shop->takeOrder('more milk', 2);
-$shop->takeOrder('without sugar', 5);
+$loja->pegarPedido('menos açucar', 1);
+$loja->pegarPedido('mais leite', 2);
+$loja->pegarPedido('sem açucar', 5);
 
-$shop->serve();
-// Serving tea to table# 1
-// Serving tea to table# 2
-// Serving tea to table# 5
+$loja->servir();
+// Servindo chá para mesa #1
+// Servindo chá para mesa #2
+// Servindo chá para mesa #5
 ```
 
 🎱 Proxy
 -------------------
+
 Exemplo do mundo real:
-> Have you ever used an access card to go through a door? There are multiple options to open that door i.e. it can be opened either using access card or by pressing a button that bypasses the security. The door's main functionality is to open but there is a proxy added on top of it to add some functionality. Let me better explain it using the code example below.
+
+> Você já teve que usar um cartão de acesso para abrir alguma porta? Existem múltiplas opções para abrir aquela porta, por exemplo, um cartão de acesso ou então um botão que desativa a segurança. A principal funcionalidade da porta é abrir, mas existe um proxy adicionado sobre ela para criar funcionalidades adicionais. Vamos explicar melhor usando o exemplo abaixo.
 
 Em palavras simples:
-> Using the proxy pattern, a class represents the functionality of another class.
+
+> Usando o padrão proxy, uma classe representa uma funcionalidade de outra classe.
 
 Wikipédia diz:
-> A proxy, in its most general form, is a class functioning as an interface to something else. A proxy is a wrapper or agent object that is being called by the client to access the real serving object behind the scenes. Use of the proxy can simply be forwarding to the real object, or can provide additional logic. In the proxy extra functionality can be provided, for example caching when operations on the real object are resource intensive, or checking preconditions before operations on the real object are invoked.
+
+> Um proxy, na sua forma mais geral, é uma classe funcionando com interface para alguma outra coisa. Um proxy é um encapsulamento ou um objeto agente que é chamado pelo cliente para acessar o objeto servidor real por baixo dos panos. Um uso do proxy pode ser simplesmente redirecionar para o objeto real, ou então prover lógicas extras. No proxy, novas funcionalidades podem ser implementadas, por exemplo, cache de operações quando as mesmas no objeto real são de custo intenso, ou então checar pré-condições antes de operações serem executadas em tais objetos.
 
 **Exemplo programático**
 
-Taking our security door example from above. Firstly we have the door interface and an implementation of door
+Vamos utilizar nosso exemplo da porta acima, primeiramente implementamos a interface para uma porta:
 
 ```php
-interface Door
+interface Porta
 {
-    public function open();
-    public function close();
+    public function abrir();
+    public function fechar();
 }
 
-class LabDoor implements Door
+class PortaLaboratorio implements Porta
 {
-    public function open()
+    public function abrir()
     {
-        echo "Opening lab door";
+        echo "Abrindo porta do laboratório";
     }
 
-    public function close()
+    public function fechar()
     {
-        echo "Closing the lab door";
+        echo "Fechando porta do laboratório";
     }
 }
 ```
-Then we have a proxy to secure any doors that we want
+
+Agora criamos um proxy para adicionar segurança a qualquer tipo de porta que quisermos: 
+
 ```php
-class Security
+class Seguranca
 {
     protected $porta;
 
-    public function __construct(Door $porta)
+    public function __construct(Porta $porta)
     {
-        $this->door = $porta;
+        $this->porta = $porta;
     }
 
-    public function open($password)
+    public function open($senha)
     {
-        if ($this->authenticate($password)) {
-            $this->door->open();
+        if ($this->autenticar($senha)) {
+            $this->porta->abrir();
         } else {
-            echo "Big no! It ain't possible.";
+            echo "Opa! Não é possível!";
         }
     }
 
-    public function authenticate($password)
+    public function autenticar($senha)
     {
-        return $password === '$ecr@t';
+        return $senha === '$ecr@t';
     }
 
-    public function close()
+    public function fechar()
     {
-        $this->door->close();
+        $this->porta->fechar();
     }
 }
 ```
-And here is how it can be used
-```php
-$porta = new Security(new LabDoor());
-$porta->open('invalid'); // Big no! It ain't possible.
 
-$porta->open('$ecr@t'); // Opening lab door
-$porta->close(); // Closing lab door
+E aqui está o uso:
+
+```php
+$porta = new Seguranca(new PortaLaboratorio());
+$porta->abrir('invalida'); // Opa! Não é possível!
+
+$porta->abrir('$ecr@t'); // Abrindo porta do laboratório
+$porta->fechar(); // Fechando porta do laboratório
 ```
-Yet another example would be some sort of data-mapper implementation. For example, I recently made an ODM (Object Data Mapper) for MongoDB using this pattern where I wrote a proxy around mongo classes while utilizing the magic method `__call()`. All the method calls were proxied to the original mongo class and result retrieved was returned as it is but in case of `find` or `findOne` data was mapped to the required class objects and the object was returned instead of `Cursor`.
+
+Ainda, um novo exemplo seria algum tipo de implementação de mapeamento de dados. Por exemplo, recentemente fiz um ODM (Object Data Mapper) para MongoDB usando este padrão, onde escrevi um proxy ao redor das classes do mongo enquanto utilizava o _magic method_ `__call()`. Todas as chamadas de métodos eram roteadas para a classe original do mongo e o resultado era retornado da forma original, mas no caso do uso da função `find` ou `findOne`, o dado era mapeado para a classe requerida e o objeto era retornado ao invés de um `Cursor`.
 
 <a name="comportamentais"></a>Padrões de projeto comportamentais
 ==========================
 
 Em palavras simples:
-> It is concerned with assignment of responsibilities between the objects. What makes them different from structural patterns is they don't just specify the structure but also outline the patterns for message passing/communication between them. Or in other words, they assist in answering "How to run a behavior in software component?"
+
+> Estão preocupados com a delegação de responsabilidades entre os objetos. O que torna esta caregoria diferente dos estruturais é que eles não só especificam a estrutura, mas também as regras e padrões de comunicação entre os objetos. Em outras palavras, eles ajudam a responder a pergunta: "Como executar um comportamento em um componente de software?".
 
 Wikipédia diz:
-> In software engineering, behavioral design patterns are design patterns that identify common communication patterns between objects and realize these patterns. By doing so, these patterns increase flexibility in carrying out this communication.
 
-* [Chain of Responsibility](#-chain-of-responsibility)
-* [Command](#-command)
-* [Iterator](#-iterator)
-* [Mediator](#-mediator)
+> Em Engenharia de Software, padrões de projeto comportamentais são modelos de projeto que identificam padrões de comunicações comuns entre objetos. Desta forma, este tipo de padrões aumentam a flexibilidade e facilidade desta comunicação acontecer.
+
+* [Cadeia de Responsabilidade](#cadeia)
+* [Comando](#comando)
+* [Iterador](#iterador)
+* [Mediador](#mediador)
 * [Memento](#-memento)
-* [Observer](#-observer)
-* [Visitor](#-visitor)
-* [Strategy](#-strategy)
-* [State](#-state)
-* [Template Method](#-template-method)
+* [Observador](#observador)
+* [Visitante](#visitante)
+* [Estratégia](#estrategia)
+* [Estado](#estado)
+* [Método Modelo](#template)
 
-🔗 Chain of Responsibility
+<a name="cadeia"></a>🔗 Cadeia de Responsabilidade
 -----------------------
 
 Exemplo do mundo real:
-> For example, you have three payment methods (`A`, `B` and `C`) setup in your account; each having a different amount in it. `A` has 100 USD, `B` has 300 USD and `C` having 1000 USD and the preference for payments is chosen as `A` then `B` then `C`. You try to purchase something that is worth 210 USD. Using Chain of Responsibility, first of all account `A` will be checked if it can make the purchase, if yes purchase will be made and the chain will be broken. If not, request will move forward to account `B` checking for amount if yes chain will be broken otherwise the request will keep forwarding till it finds the suitable handler. Here `A`, `B` and `C` are links of the chain and the whole phenomenon is Chain of Responsibility.
+
+> Por exemplo, você tem três meios de pagamento (`A`, `B` e `C`) já cadastrados em sua conta em algum site. Cada um deles possui uma quantidade de dinheiro. O `A` tem R$100,00, `B` possui R$300,00 e o `C` tem R$1000,00, e a preferência de pagamento sempre segue: Primeiro `A`, depois `B` e então `C`. Você tenta comprar alguma coisa que vale R$210,00. Usando a Cadeia de Responsabilidade, primeiramente a conta `A` será verificada para saber se possui valor suficiente para fazer a compra, se sim, então a compra será feita e a cadeia quebrada. Se não, a requisição irá para frente para a conta `B`, checando a quantidade novamente, se sim, a cadeia será quebrada, caso contrário a requisição continuará se movendo para frente até que encontre uma conta aceitável. Aqui `A`, `B` e `C` são elos da cadeia, e o fenômeno todo é a cadeia de responsabilidade.
 
 Em palavras simples:
-> It helps building a chain of objects. Request enters from one end and keeps going from object to object till it finds the suitable handler.
+
+> Ajuda a construir uma cadeia de objetos. A requisição entra por um lado e continua de objeto a objeto até chegar em um objeto aceitável.
 
 Wikipédia diz:
-> In object-oriented design, the chain-of-responsibility pattern is a design pattern consisting of a source of command objects and a series of processing objects. Each processing object contains logic that defines the types of command objects that it can handle; the rest are passed to the next processing object in the chain.
+
+> Em design orientado à objetos, o padrão da cadeia de responsabilidade é um padrão de projetos que consiste em uma sequência de objetos de origem e uma sequência de objetos de processamento. Cada objeto de processamento contém a lógica que define que tipos de comando o objeto em questão pode lidar. O resto é passado para o objeto de processamento seguinte na cadeia.
 
 **Exemplo programático**
 
-Translating our account example above. First of all we have a base account having the logic for chaining the accounts together and some accounts
+Vamos traduzir nosso exemplo com as contas, primeiramente temos a nossa conta base:
 
 ```php
-abstract class Account
+abstract class Conta
 {
     protected $successor;
-    protected $balance;
+    protected $saldo;
 
-    public function setNext(Account $account)
+    public function setarProximo(Conta $conta)
     {
-        $this->successor = $account;
+        $this->successor = $conta;
     }
 
-    public function pay(float $amountToPay)
+    public function pagar(float $quantidadeAPagar)
     {
-        if ($this->canPay($amountToPay)) {
-            echo sprintf('Paid %s using %s' . PHP_EOL, $amountToPay, get_called_class());
+        if ($this->podePagar($quantidadeAPagar)) {
+            echo sprintf('Pago %s usando %s' . PHP_EOL, $quantidadeAPagar, get_called_class());
         } elseif ($this->successor) {
-            echo sprintf('Cannot pay using %s. Proceeding ..' . PHP_EOL, get_called_class());
-            $this->successor->pay($amountToPay);
+            echo sprintf('Não é possível pagar usando %s. Continuando ...' . PHP_EOL, get_called_class());
+            $this->successor->pagar($quantidadeAPagar);
         } else {
-            throw new Exception('None of the accounts have enough balance');
+            throw new Exception('Nenhuma das contas tem saldo suficiente');
         }
     }
 
-    public function canPay($amount): bool
+    public function podePagar($quantia): bool
     {
-        return $this->balance >= $amount;
+        return $this->saldo >= $quantia;
     }
 }
 
-class Bank extends Account
+class Banco extends Conta
 {
-    protected $balance;
+    protected $saldo;
 
-    public function __construct(float $balance)
+    public function __construct(float $saldo)
     {
-        $this->balance = $balance;
+        $this->saldo = $saldo;
     }
 }
 
-class Paypal extends Account
+class Paypal extends Conta
 {
-    protected $balance;
+    protected $saldo;
 
-    public function __construct(float $balance)
+    public function __construct(float $saldo)
     {
-        $this->balance = $balance;
+        $this->saldo = $saldo;
     }
 }
 
-class Bitcoin extends Account
+class Bitcoin extends Conta
 {
-    protected $balance;
+    protected $saldo;
 
-    public function __construct(float $balance)
+    public function __construct(float $saldo)
     {
-        $this->balance = $balance;
+        $this->saldo = $saldo;
     }
 }
 ```
 
-Now let's prepare the chain using the links defined above (i.e. Bank, Paypal, Bitcoin)
+Vamos preparar a cadeia seguindo a ordem acima (Ex: Bank, Paypal, Bitcoin)
 
 ```php
-// Let's prepare a chain like below
-//      $bank->$paypal->$bitcoin
+// A ordem da cadeia será igual a abaixo
+//      $banco->$paypal->$bitcoin
 //
-// First priority bank
-//      If bank can't pay then paypal
-//      If paypal can't pay then bit coin
+// Primeiramente o banco
+//      Se o banco não puder pagar, então paypal
+//        Se o paypal não puder então o BitCoin
 
-$bank = new Bank(100);          // Bank with balance 100
-$paypal = new Paypal(200);      // Paypal with balance 200
-$bitcoin = new Bitcoin(300);    // Bitcoin with balance 300
+$banco = new Banco(100);          // Banco com saldo 100
+$paypal = new Paypal(200);      // Paypal com saldo 200
+$bitcoin = new Bitcoin(300);    // Bitcoin com saldo 300
 
-$bank->setNext($paypal);
-$paypal->setNext($bitcoin);
+$banco->setarProximo($paypal);
+$paypal->setarProximo($bitcoin);
 
-// Let's try to pay using the first priority i.e. bank
-$bank->pay(259);
+// Vamos tentar pagar usando a primeira prioridade da lista, o banco
+$banco->pagar(259);
 
-// Output will be
+// A saída vai ser
 // ==============
-// Cannot pay using bank. Proceeding ..
-// Cannot pay using paypal. Proceeding ..:
-// Paid 259 using Bitcoin!
+// Não é possível pagar usando o banco. Continuando ...:
+// Não é possível pagar usando PayPal. Continuando...:
+// Pago 259 usando BitCoin
 ```
 
-👮 Command
+<a name="comando"></a>👮 Comando
 -------
 
 Exemplo do mundo real:
-> A generic example would be you ordering a food at restaurant. You (i.e. `Client`) ask the waiter (i.e. `Invoker`) to bring some food (i.e. `Command`) and waiter simply forwards the request to Chef (i.e. `Receiver`) who has the knowledge of what and how to cook.
-> Another example would be you (i.e. `Client`) switching on (i.e. `Command`) the television (i.e. `Receiver`) using a remote control (`Invoker`).
+
+> Um exemplo bem genérico seria pedir comida em um restaurante. Você (`Cliente`) pede ao garçom (`Invocador`) para trazer comida (`Comando`) e o garçom simplesmente passa a requisição a diante para o chef (`Receptor`) que possui o conhecimento de como e o que cozinhar.
+
+> Outro exemplo seria você (`Cliente`) trocando de canais (`Comando`) na televisão (`Receptor`) usando o controle remoto (`Invocador`).
 
 Em palavras simples:
-> Allows you to encapsulate actions in objects. The key idea behind this pattern is to provide the means to decouple client from receiver.
+
+> Permite que você encapsule ações em objetos. A ideia chave por trás deste padrão e prover uma maneira de desacoplar o cliente do receptor.
 
 Wikipédia diz:
-> In object-oriented programming, the command pattern is a behavioral design pattern in which an object is used to encapsulate all information needed to perform an action or trigger an event at a later time. This information includes the method name, the object that owns the method and values for the method parameters.
+
+> Em POO, o padrão comando é um padrão de projetos comportamental no qual um objeto é usado para encapsular toda a informação necessárias para executar uma ação ou acionar um evento mais adiante no fluxo de execução. Estas informações incluem o nome do método, o objeto que é dono deste método e os valores para os parâmetros do métoso.
 
 **Exemplo programático**
 
-First of all we have the receiver that has the implementation of every action that could be performed
+Primeiramente temos o nosso receptor, que tem a implementação de todas as ações que podem ser executadas:
+
 ```php
-// Receiver
-class Bulb
+// Receptor
+class Luz
 {
     public function ligar()
     {
-        echo "Bulb has been lit";
+        echo "Luz foi ligada";
     }
 
     public function desligar()
     {
-        echo "Darkness!";
+        echo "Escuridão!";
     }
 }
 ```
-then we have an interface that each of the commands are going to implement and then we have a set of commands
+
+Depois temos a interface que cada comando vai implementar e então o conjunto de comandos:
+
 ```php
-interface Command
+interface Commando
 {
-    public function execute();
-    public function undo();
-    public function redo();
+    public function executar();
+    public function desfazer();
+    public function refazer();
 }
 
-// Command
-class TurnOn implements Command
+// Commando
+class Ligar implements Commando
 {
-    protected $bulb;
+    protected $luz;
 
-    public function __construct(Bulb $bulb)
+    public function __construct(Luz $luz)
     {
-        $this->bulb = $bulb;
+        $this->luz = $luz;
     }
 
-    public function execute()
+    public function executar()
     {
-        $this->bulb->turnOn();
+        $this->luz->ligar();
     }
 
-    public function undo()
+    public function desfazer()
     {
-        $this->bulb->desligar();
+        $this->luz->desligar();
     }
 
-    public function redo()
+    public function refazer()
     {
-        $this->execute();
+        $this->executar();
     }
 }
 
-class desligar implements Command
+class Desligar implements Commando
 {
-    protected $bulb;
+    protected $luz;
 
-    public function __construct(Bulb $bulb)
+    public function __construct(Luz $luz)
     {
-        $this->bulb = $bulb;
+        $this->luz = $luz;
     }
 
-    public function execute()
+    public function executar()
     {
-        $this->bulb->desligar();
+        $this->luz->desligar();
     }
 
-    public function undo()
+    public function desfazer()
     {
-        $this->bulb->turnOn();
+        $this->luz->ligar();
     }
 
-    public function redo()
+    public function refazer()
     {
-        $this->execute();
+        $this->executar();
     }
 }
 ```
-Then we have an `Invoker` with whom the client will interact to process any commands
+
+Então temos o `Invocador`, com quem o cliente vai interagir para executar quaisquer comandos.
+
 ```php
-// Invoker
-class RemoteControl
+// Invocador
+class ControleRemoto
 {
-    public function submit(Command $command)
+    public function enviar(Comando $comando)
     {
-        $command->execute();
+        $comando->executar();
     }
 }
 ```
-Finally let's see how we can use it in our client
+
+Agora podemos usar assim:
+
 ```php
-$bulb = new Bulb();
+$luz = new Luz();
 
-$turnOn = new TurnOn($bulb);
-$desligar = new desligar($bulb);
+$ligar = new Ligar($luz);
+$desligar = new Desligar($luz);
 
-$remote = new RemoteControl();
-$remote->submit($turnOn); // Bulb has been lit!
-$remote->submit($desligar); // Darkness!
+$remote = new ControleRemoto();
+$remote->enviar($ligar); // A Luz foi acessa
+$remote->enviar($desligar); // Escuridão!
 ```
 
-Command pattern can also be used to implement a transaction based system. Where you keep maintaining the history of commands as soon as you execute them. If the final command is successfully executed, all good otherwise just iterate through the history and keep executing the `undo` on all the executed commands.
+O padrão comando também é usado para implementar sistemas baseados em transações. Aonde você mantém um histórico de comandos que foram executados a medida que você os roda. Se o comando final for executado com sucesso, então está tudo ok, mas caso um dos comandos dê errado, então basta iterar pelo histórico executando o método `desfazer` em cada comando executado.
 
-➿ Iterator
+Outra aplicação do padrão comando é para sistemas aonde você possui plugins ou comandos externos que podem ser criados pelos usuários do sistema. Por exemplo, imagine que você possua um sistema de controle remoto de determinada plataforma, existem várias ações que o usuário pode executar, e outras ações podem ser adicionadas no futuro. Desta forma é necessário ter uma aplicação cliente que envia o nome da ação e seus parâmetros para o `invocador`, que é uma classe presente juntamente com a plataforma que será controlada, desta forma este invocador pode instanciar o comando enviado e executar qualquer lógica interna, retornando o resultado para o `cliente` no final do processo. Caso seja necessário adicionar uma nova ação, basta que um novo arquivo seja criado implementando a interface de comandos. Note que neste modelo, não é necessário implementar as funções para histórico transacional.
+
+<a name="iterador"></a>➿ Iterador
 --------
 
 Exemplo do mundo real:
-> An old radio set will be a good example of iterator, where user could start at some channel and then use next or previous buttons to go through the respective channels. Or take an example of MP3 player or a TV set where you could press the next and previous buttons to go through the consecutive channels or in other words they all provide an interface to iterate through the respective channels, songs or radio stations.  
+
+> Um rádio antigo é um ótimo exemplo de iterador, onde o usuário pode começar em alguma estação e usar os botões "próximo" ou "anterior" para avançar ou voltar as respectivas estações. Ou também o exemplo de um MP3 Player ou uma TV aonde você pode utilizar os mesmos botões para avançar ou voltar os canais ou músicas consecutivas. Em outras palavras, todos eles provêm interfaces para iterar através dos canais. 
 
 Em palavras simples:
-> It presents a way to access the elements of an object without exposing the underlying presentation.
+
+> Apresenta uma maneira de acessar elementos de um objeto sem expor a apresentação interna do mesmo.
 
 Wikipédia diz:
-> In object-oriented programming, the iterator pattern is a design pattern in which an iterator is used to traverse a container and access the container's elements. The iterator pattern decouples algorithms from containers; in some cases, algorithms are necessarily container-specific and thus cannot be decoupled.
 
-**Programmatic example**
+> Em POO, o padrão iterador é um padrão de projeto no qual um iterador é usado para transpor um container e acessar seus elementos. Este padrão desacopla os algoritmos de seus containers; em alguns casos, os algoritmos são específicos dos containers e, portanto, não podem ser desacoplados.
 
-In PHP it is quite easy to implement using SPL (Standard PHP Library). Translating our radio stations example from above. First of all we have `RadioStation`
+**Exemplo programático**
+
+No PHP isso é muito simples de fazer usando a SPL (Standard PHP Library). Traduzindo nosso exemplo com rádio. Primeiramente temos nossa classe de `EstacaoRadio`:
 
 ```php
-class RadioStation
+class EstacaoRadio
 {
-    protected $frequency;
+    protected $frequencia;
 
-    public function __construct(float $frequency)
+    public function __construct(float $frequencia)
     {
-        $this->frequency = $frequency;
+        $this->frequencia = $frequencia;
     }
 
-    public function getFrequency(): float
+    public function obterFrequencia(): float
     {
-        return $this->frequency;
+        return $this->frequencia;
     }
 }
 ```
-Then we have our iterator
+
+Então temos nosso iterador:
 
 ```php
 use Countable;
 use Iterator;
 
-class StationList implements Countable, Iterator
+class ListaEstacoes implements Countable, Iterator
 {
-    /** @var RadioStation[] $stations */
-    protected $stations = [];
+    /** @var EstacaoRadio[] $estacoes */
+    protected $estacoes = [];
 
     /** @var int $counter */
     protected $counter;
 
-    public function addStation(RadioStation $station)
+    public function adicionarEstacao(EstacaoRadio $estacao)
     {
-        $this->stations[] = $station;
+        $this->estacoes[] = $estacao;
     }
 
-    public function removeStation(RadioStation $toRemove)
+    public function removerEstacao(EstacaoRadio $aRemover)
     {
-        $toRemoveFrequency = $toRemove->getFrequency();
-        $this->stations = array_filter($this->stations, function (RadioStation $station) use ($toRemoveFrequency) {
-            return $station->getFrequency() !== $toRemoveFrequency;
+        $aRemoverFrequencia = $aRemover->obterFrequencia();
+        $this->estacoes = array_filter($this->estacoes, function (EstacaoRadio $estacao) use ($aRemoverFrequencia) {
+            return $estacao->obterFrequencia() !== $aRemoverFrequencia;
         });
     }
 
     public function count(): int
     {
-        return count($this->stations);
+        return count($this->estacoes);
     }
 
-    public function current(): RadioStation
+    public function current(): EstacaoRadio
     {
-        return $this->stations[$this->counter];
+        return $this->estacoes[$this->counter];
     }
 
     public function key()
@@ -1627,57 +1658,62 @@ class StationList implements Countable, Iterator
 
     public function valid(): bool
     {
-        return isset($this->stations[$this->counter]);
+        return isset($this->estacoes[$this->counter]);
     }
 }
 ```
-And then it can be used as
+
+Então usamos como:
+
 ```php
-$stationList = new StationList();
+$listaEstacoes = new ListaEstacoes();
 
-$stationList->addStation(new RadioStation(89));
-$stationList->addStation(new RadioStation(101));
-$stationList->addStation(new RadioStation(102));
-$stationList->addStation(new RadioStation(103.2));
+$listaEstacoes->adicionarEstacao(new EstacaoRadio(89));
+$listaEstacoes->adicionarEstacao(new EstacaoRadio(101));
+$listaEstacoes->adicionarEstacao(new EstacaoRadio(102));
+$listaEstacoes->adicionarEstacao(new EstacaoRadio(103.2));
 
-foreach($stationList as $station) {
-    echo $station->getFrequency() . PHP_EOL;
+foreach($listaEstacoes as $estacao) {
+    echo $estacao->obterFrequencia() . PHP_EOL;
 }
 
-$stationList->removeStation(new RadioStation(89)); // Will remove station 89
+$listaEstacoes->removerEstacao(new EstacaoRadio(89)); // Vai remover a estação 89
 ```
 
-👽 Mediator
+<a name="mediador"></a>👽 Mediador
 ========
 
 Exemplo do mundo real:
-> A general example would be when you talk to someone on your mobile phone, there is a network provider sitting between you and them and your conversation goes through it instead of being directly sent. In this case network provider is mediator.
+
+> Um exemplo geral seria quando você conversa com alguém no seu celular, existe um provedor de rede entre você e a pessoa, e sua conversa passa por este provedor ao invés de ser enviada diretamente. Neste caso, o provedor de rede é o mediador.
 
 Em palavras simples:
-> Mediator pattern adds a third party object (called mediator) to control the interaction between two objects (called colleagues). It helps reduce the coupling between the classes communicating with each other. Because now they don't need to have the knowledge of each other's implementation.
+
+> O padrão mediador adiciona um objeto terceiro (chamado de mediador) para controlar a interação entre dois objetos (chamados de colegas). Ajuda a reduzir o acoplamento entre as partes que se comunicam entre si, pois cada uma não precisa ter o conhecimento da implementação da outra.
 
 Wikipédia diz:
-> In software engineering, the mediator pattern defines an object that encapsulates how a set of objects interact. This pattern is considered to be a behavioral pattern due to the way it can alter the program's running behavior.
+
+> Em engenharia de software, o padrão mediador define um objeto que encapsula como uma série de objetos deve interagir. Este padrão é considerado como um padrão comportamental devido ao modo como ele pode alterar o comportamento de execução do programa.
 
 **Exemplo programático**
 
-Here is the simplest example of a chat room (i.e. mediator) with users (i.e. colleagues) sending messages to each other.
+Aqui está o exemplo mais simples possível de uma sala de chat (mediador) e seus usuáriso (colegas) enviando mensagens um ao outro.
 
-First of all, we have the mediator i.e. the chat room
+Primeiramento temos nosso mediador:
 
 ```php
-interface ChatRoomMediator 
+interface MediadorSalaChat 
 {
-    public function showMessage(User $user, string $message);
+    public function showMessage(User $usuario, string $message);
 }
 
 // Mediator
-class ChatRoom implements ChatRoomMediator
+class ChatRoom implements MediadorSalaChat
 {
-    public function showMessage(User $user, string $message)
+    public function showMessage(User $usuario, string $message)
     {
         $time = date('M d, y H:i');
-        $sender = $user->obterNome();
+        $sender = $usuario->obterNome();
 
         echo $time . '[' . $sender . ']:' . $message;
     }
@@ -1690,7 +1726,7 @@ class User {
     protected $nome;
     protected $chatMediator;
 
-    public function __construct(string $nome, ChatRoomMediator $chatMediator) {
+    public function __construct(string $nome, MediadorSalaChat $chatMediator) {
         $this->nome = $nome;
         $this->chatMediator = $chatMediator;
     }
@@ -1808,7 +1844,7 @@ $editor->restore($saved);
 $editor->obterConteudo(); // This is the first sentence. This is second.
 ```
 
-😎 Observer
+<a name="observador"></a>😎 Observador
 --------
 Exemplo do mundo real:
 > A good example would be the job seekers where they subscribe to some job posting site and they are notified whenever there is a matching job opportunity.   
@@ -1819,7 +1855,7 @@ Em palavras simples:
 Wikipédia diz:
 > The observer pattern is a software design pattern in which an object, called the subject, maintains a list of its dependents, called observers, and notifies them automatically of any state changes, usually by calling one of their methods.
 
-**Programmatic example**
+**Exemplo programático**
 
 Translating our example from above. First of all we have job seekers that need to be notified for a job posting
 ```php
@@ -1897,7 +1933,7 @@ $jobPostings->addJob(new JobPost('Software Engineer'));
 // Hi Jane Doe! New job posted: Software Engineer
 ```
 
-🏃 Visitor
+<a name="visitante"></a>🏃 Visitante
 -------
 Exemplo do mundo real:
 > Consider someone visiting Dubai. They just need a way (i.e. visa) to enter Dubai. After arrival, they can come and visit any place in Dubai on their own without having to ask for permission or to do some leg work in order to visit any place here; just let them know of a place and they can visit it. Visitor pattern lets you do just that, it helps you add places to visit so that they can visit as much as they can without having to do any legwork.
@@ -1908,7 +1944,7 @@ Em palavras simples:
 Wikipédia diz:
 > In object-oriented programming and software engineering, the visitor design pattern is a way of separating an algorithm from an object structure on which it operates. A practical result of this separation is the ability to add new operations to existing object structures without modifying those structures. It is one way to follow the open/closed principle.
 
-**Programmatic example**
+**Exemplo programático**
 
 Let's take an example of a zoo simulation where we have several different kinds of animals and we have to make them Sound. Let's translate this using visitor pattern
 
@@ -2036,7 +2072,7 @@ $dolphin->accept($speak);  // Tuut tutt tuutt!
 $dolphin->accept($jump);   // Walked on water a little and disappeared
 ```
 
-💡 Strategy
+<a name="estrategia"></a>💡 Estratégia
 --------
 
 Exemplo do mundo real:
@@ -2048,7 +2084,7 @@ Em palavras simples:
 Wikipédia diz:
 > In Computador programming, the strategy pattern (also known as the policy pattern) is a behavioural software design pattern that enables an algorithm's behavior to be selected at runtime.
 
-**Programmatic example**
+**Exemplo programático**
 
 Translating our example from above. First of all we have our strategy interface and different strategy implementations
 
@@ -2109,7 +2145,7 @@ $sorter = new Sorter(new QuickSortStrategy());
 $sorter->sort($dataset); // Output : Sorting using quick sort
 ```
 
-💢 State
+<a name="estado"></a>💢 State
 -----
 Exemplo do mundo real:
 > Imagine you are using some drawing application, you choose the paint brush to draw. Now the brush changes its behavior based on the selected color i.e. if you have chosen red color it will draw in red, if blue then it will be in blue etc.  
@@ -2121,7 +2157,7 @@ Wikipédia diz:
 > The state pattern is a behavioral software design pattern that implements a state machine in an object-oriented way. With the state pattern, a state machine is implemented by implementing each individual state as a derived class of the state pattern interface, and implementing state transitions by invoking methods defined by the pattern's superclass.
 > The state pattern can be interpreted as a strategy pattern which is able to switch the current strategy through invocations of methods defined in the pattern's interface.
 
-**Programmatic example**
+**Exemplo programático**
 
 Let's take an example of text editor, it lets you change the state of text that is typed i.e. if you have selected bold, it starts writing in bold, if italic then in italics etc.
 
@@ -2203,7 +2239,7 @@ $editor->type('Fifth line');
 // fifth line
 ```
 
-📒 Template Method
+<a name="template"></a>📒 Método Modelo
 ---------------
 
 Exemplo do mundo real:
