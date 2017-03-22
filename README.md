@@ -1704,177 +1704,189 @@ Primeiramento temos nosso mediador:
 ```php
 interface MediadorSalaChat 
 {
-    public function showMessage(User $usuario, string $message);
+    public function mostrarMensagem(Usuario $usuario, string $mensagem);
 }
 
-// Mediator
-class ChatRoom implements MediadorSalaChat
+// Mediador
+class SalaChat implements MediadorSalaChat
 {
-    public function showMessage(User $usuario, string $message)
+    public function mostrarMensagem(Usuario $usuario, string $mensagem)
     {
-        $time = date('M d, y H:i');
-        $sender = $usuario->obterNome();
+        $hora = date('M d, y H:i');
+        $remetente = $usuario->obterNome();
 
-        echo $time . '[' . $sender . ']:' . $message;
+        echo $hora . '[' . $remetente . ']:' . $mensagem;
     }
 }
 ```
 
-Then we have our users i.e. colleagues
-```php
-class User {
-    protected $nome;
-    protected $chatMediator;
+Então temos a implementação dos nossos usuários (os colegas):
 
-    public function __construct(string $nome, MediadorSalaChat $chatMediator) {
+```php
+class Usuario {
+    protected $nome;
+    protected $mediador;
+
+    public function __construct(string $nome, MediadorSalaChat $mediador) {
         $this->nome = $nome;
-        $this->chatMediator = $chatMediator;
+        $this->mediador = $mediador;
     }
 
     public function obterNome() {
         return $this->nome;
     }
 
-    public function send($message) {
-        $this->chatMediator->showMessage($this, $message);
+    public function enviar($mensagem) {
+        $this->mediador->mostrarMensagem($this, $mensagem);
     }
 }
 ```
-And the usage
+
+E o uso real:
+
 ```php
 $mediator = new ChatRoom();
 
-$john = new User('John Doe', $mediator);
-$jane = new User('Jane Doe', $mediator);
+$john = new Usuario('John Doe', $mediator);
+$jane = new Usuario('Jane Doe', $mediator);
 
-$john->send('Hi there!');
-$jane->send('Hey!');
+$john->enviar('Olá!');
+$jane->enviar('Hey!');
 
-// Output will be
-// Feb 14, 10:58 [John]: Hi there!
+// A saída vai ser
+// Feb 14, 10:58 [John]: Olá!
 // Feb 14, 10:58 [Jane]: Hey!
 ```
 
 💾 Memento
 -------
+
 Exemplo do mundo real:
-> Take the example of calculator (i.e. originator), where whenever you perform some calculation the last calculation is saved in memory (i.e. memento) so that you can get back to it and maybe get it restored using some action buttons (i.e. caretaker).
+
+> Vamos pegar o exemplo de uma calculadora (`Originador`), onde, sempre que você executa algum cálculo, o último cálculo é salvo na memória (`Memento`) para que você possa retornar a ele ou então restaurar o mesmo utilizando algum botão de ação (`Zelador`, ou `Caretaker`).
 
 Em palavras simples:
-> Memento pattern is about capturing and storing the current state of an object in a manner that it can be restored later on in a smooth manner.
+
+> O Memento é um padrão que diz respeito a capturar e guardar o estado atual de um objeto de uma maneira que ele possa ser restaurado depois de uma maneira suave.
 
 Wikipédia diz:
-> The memento pattern is a software design pattern that provides the ability to restore an object to its previous state (undo via rollback).
 
-Usually useful when you need to provide some sort of undo functionality.
+> O padrão memento, é um padrão de desenvolvimento de software que provê a habilidade de restaurar um objeto a seu estado anterior (desfazer via rollback).
+
+É geralmente útil quando você precisa alguma funcionalidade do tipo `desfazer`.
 
 **Exemplo programático**
 
-Lets take an example of text editor which keeps saving the state from time to time and that you can restore if you want.
+Vamos pegar um exemplo de um editor de texto que salva o estado do texto de tempos em tempos, e o usuário pode restaurar esse estado se ele preferir.
 
-First of all we have our memento object that will be able to hold the editor state
+Primeiramente, vamos criar nosso objeto Memento, que vai ser o artefato que vai guardar o estado do editor.
 
 ```php
 class EditorMemento
 {
-    protected $content;
+    protected $conteudo;
 
-    public function __construct(string $content)
+    public function __construct(string $conteudo)
     {
-        $this->content = $content;
+        $this->conteudo = $conteudo;
     }
 
     public function obterConteudo()
     {
-        return $this->content;
+        return $this->conteudo;
     }
 }
 ```
 
-Then we have our editor i.e. originator that is going to use memento object
+Então temos nosso objeto originador (o editor de texto), que vai utilizar o memento:
 
 ```php
 class Editor
 {
-    protected $content = '';
+    protected $conteudo = '';
 
-    public function type(string $words)
+    public function digitar(string $palavras)
     {
-        $this->content = $this->content . ' ' . $words;
+        $this->conteudo = $this->conteudo . ' ' . $palavras;
     }
 
     public function obterConteudo()
     {
-        return $this->content;
+        return $this->conteudo;
     }
 
-    public function save()
+    public function salvar()
     {
-        return new EditorMemento($this->content);
+        return new EditorMemento($this->conteudo);
     }
 
-    public function restore(EditorMemento $memento)
+    public function restaurar(EditorMemento $memento)
     {
-        $this->content = $memento->obterConteudo();
+        $this->conteudo = $memento->obterConteudo();
     }
 }
 ```
 
-And then it can be used as
+Então podemos utilizar:
 
 ```php
 $editor = new Editor();
 
-// Type some stuff
-$editor->type('This is the first sentence.');
-$editor->type('This is second.');
+// digitamos alguma coisa
+$editor->digitar('Esta é a primeira frase.');
+$editor->digitar('Esta é a segunda.');
 
-// Save the state to restore to : This is the first sentence. This is second.
-$saved = $editor->save();
+// Salvamos o estado para que possamos retornar: Esta é a primeira frase. Esta é a segunda.
+$salvo = $editor->salvar();
 
-// Type some more
-$editor->type('And this is third.');
+// digitamos mais alguma coisa
+$editor->digitar('E esta é a terceira.');
 
-// Output: Content before Saving
-echo $editor->obterConteudo(); // This is the first sentence. This is second. And this is third.
+// Saída antes de salvarmos
+echo $editor->obterConteudo(); // Esta é a primeira frase. Esta é a segunda. E esta é a terceira.
 
-// Restoring to last saved state
-$editor->restore($saved);
+// Restaurando para o ultimo estado salvo
+$editor->restaurar($salvo);
 
-$editor->obterConteudo(); // This is the first sentence. This is second.
+$editor->obterConteudo(); // Esta é a primeira frase. Esta é a segunda.
 ```
 
 <a name="observador"></a>😎 Observador
 --------
+
 Exemplo do mundo real:
-> A good example would be the job seekers where they subscribe to some job posting site and they are notified whenever there is a matching job opportunity.   
+
+> Um bom exemplo deste padrão seriam pessoas procurando anuncios de emprego. Elas se inscreveriam em algum site de vagas e seriam notificados sempre que houvesse uma vaga compatível.
 
 Em palavras simples:
-> Defines a dependency between objects so that whenever an object changes its state, all its dependents are notified.
+
+> Define uma dependencia entre objetos para que, quando um deles for alterado, notificar todos os seus dependentes.
 
 Wikipédia diz:
-> The observer pattern is a software design pattern in which an object, called the subject, maintains a list of its dependents, called observers, and notifies them automatically of any state changes, usually by calling one of their methods.
+
+> O padrão observador é um padrão de desenvolvimento de software onde um objeto, chamado de sujeito, mantém uma lista de todos os seus dependentes, chamados de observadores, e os notifica automaticamente qualquer alteração de estado, geralmente chamando algum método específico dos observadores.
 
 **Exemplo programático**
 
-Translating our example from above. First of all we have job seekers that need to be notified for a job posting
-```php
-class JobPost
-{
-    protected $title;
+Traduzindo nosso exemplo acima. Primeiramente tempos nossas pessoas procurando vagas de emprego, que precisam ser notificadas (`Observadores`).
 
-    public function __construct(string $title)
+```php
+class VagaEmprego
+{
+    protected $titulo;
+
+    public function __construct(string $titulo)
     {
-        $this->title = $title;
+        $this->titulo = $titulo;
     }
 
-    public function getTitle()
+    public function obterTitulo()
     {
-        return $this->title;
+        return $this->titulo;
     }
 }
 
-class JobSeeker implements Observer
+class Candidato implements Observer
 {
     protected $nome;
 
@@ -1883,277 +1895,321 @@ class JobSeeker implements Observer
         $this->nome = $nome;
     }
 
-    public function onJobPosted(JobPost $job)
+    public function onVagaPostada(VagaEmprego $vaga)
     {
         // Do something with the job posting
-        echo 'Hi ' . $this->nome . '! New job posted: '. $job->getTitle();
+        echo 'Olá ' . $this->nome . '! Nova vaga postada: '. $vaga->obterTitulo();
     }
 }
 ```
-Then we have our job postings to which the job seekers will subscribe
-```php
-class JobPostings implements Observable
-{
-    protected $observers = [];
 
-    protected function notify(JobPost $jobPosting)
+Então temos nossas listas de vagas, a qual os nossos candidatos vão se inscrever.
+
+```php
+class Vagas implements Observable
+{
+    protected $observadores = [];
+
+    protected function notificar(VagaEmprego $vaga)
     {
-        foreach ($this->observers as $observer) {
-            $observer->onJobPosted($jobPosting);
+        foreach ($this->observadores as $observador) {
+            $observador->onVagaPostada($vaga);
         }
     }
 
-    public function attach(Observer $observer)
+    public function inscrever(Observer $observador)
     {
-        $this->observers[] = $observer;
+        $this->observadores[] = $observador;
     }
 
-    public function addJob(JobPost $jobPosting)
+    public function adicionarVaga(VagaEmprego $vaga)
     {
-        $this->notify($jobPosting);
+        $this->notificar($vaga);
     }
 }
 ```
-Then it can be used as
+
+Então usamos como:
+
 ```php
-// Create subscribers
-$johnDoe = new JobSeeker('John Doe');
-$janeDoe = new JobSeeker('Jane Doe');
+// Criamos inscritos
+$johnDoe = new Candidato('John Doe');
+$janeDoe = new Candidato('Jane Doe');
 
-// Create publisher and attach subscribers
-$jobPostings = new JobPostings();
-$jobPostings->attach($johnDoe);
-$jobPostings->attach($janeDoe);
+// Criamos o publicador e inscrevemos os candidatos
+$vagas = new Vagas();
+$vagas->inscrever($johnDoe);
+$vagas->inscrever($janeDoe);
 
-// Add a new job and see if subscribers get notified
-$jobPostings->addJob(new JobPost('Software Engineer'));
+// Adicionamos uma nova vaga e notificamos os candidatos
+$vagas->adicionarVaga(new VagaEmprego('Engenheiro de software'));
 
-// Output
-// Hi John Doe! New job posted: Software Engineer
-// Hi Jane Doe! New job posted: Software Engineer
+// Saída
+// Olá John Doe! Nova vaga psotada: Engenheiro de software
+// Olá Jane Doe! Nova vaga psotada: Engenheiro de software
 ```
 
 <a name="visitante"></a>🏃 Visitante
 -------
+
 Exemplo do mundo real:
-> Consider someone visiting Dubai. They just need a way (i.e. visa) to enter Dubai. After arrival, they can come and visit any place in Dubai on their own without having to ask for permission or to do some leg work in order to visit any place here; just let them know of a place and they can visit it. Visitor pattern lets you do just that, it helps you add places to visit so that they can visit as much as they can without having to do any legwork.
+
+> Considere alguém visitando Dubai. Eles só precisam de uma passagem (Visto) para entrar em Dubai. Depois de chegarem, eles podem entrar e visitar qualquer lugar da cidade por conta própria, sem precisar pedir permissão. Eles só precisam conhecer o local para poder ir até ele e visitá-lo. O padrão visitante permite que você faça justamente isso, ajuda a adicionar novos lugares para o visitante visitar sem que eles precisem fazer algum trabalho extra.
 
 Em palavras simples:
-> Visitor pattern lets you add further operations to objects without having to modify them.
+
+> O padrão visitante permite que você adicione novas operações em objetos sem ter de modifica-los.
 
 Wikipédia diz:
-> In object-oriented programming and software engineering, the visitor design pattern is a way of separating an algorithm from an object structure on which it operates. A practical result of this separation is the ability to add new operations to existing object structures without modifying those structures. It is one way to follow the open/closed principle.
+
+> Em POO e engenharia de software, o padrão de projetos visitante é uma maneira de separar um algoritmo da estrutura da qual ele opera. Um resultado prático desta separação é a habilidade de adicionar novas operações para objetos e estruturas existentes sem ter de modificar tais estruturas. É uma maneira de seguir o principio de abertura/fechamento.
 
 **Exemplo programático**
 
-Let's take an example of a zoo simulation where we have several different kinds of animals and we have to make them Sound. Let's translate this using visitor pattern
+Vamos pegar o exemplo de um zoológico, aonde temos diversos tipos de animais e temos que faze-los emitir algum tipo de som:
 
 ```php
-// Visitee
+// Visitado
 interface Animal
 {
-    public function accept(AnimalOperation $operation);
+    public function executarAcao(AcaoAnimal $operation);
 }
 
 // Visitor
-interface AnimalOperation
+interface AcaoAnimal
 {
-    public function visitMonkey(Monkey $monkey);
-    public function visitLion(Lion $lion);
-    public function visitDolphin(Dolphin $dolphin);
+    public function visitarMacaco(Macaco $macaco);
+    public function visitarLeao(Leao $leao);
+    public function visitarGolfinho(Golfinho $golfinho);
 }
 ```
 Then we have our implementations for the animals
 ```php
-class Monkey implements Animal
+class Macaco implements Animal
 {
-    public function shout()
+    public function gritar()
     {
         echo 'Ooh oo aa aa!';
     }
 
-    public function accept(AnimalOperation $operation)
+    public function accept(AcaoAnimal $operation)
     {
-        $operation->visitMonkey($this);
+        $operation->visitarMacaco($this);
     }
 }
 
-class Lion implements Animal
+class Leao implements Animal
 {
-    public function roar()
+    public function rugir()
     {
         echo 'Roaaar!';
     }
 
-    public function accept(AnimalOperation $operation)
+    public function accept(AcaoAnimal $operation)
     {
-        $operation->visitLion($this);
+        $operation->visitarLeao($this);
     }
 }
 
-class Dolphin implements Animal
+class Golfinho implements Animal
 {
-    public function speak()
+    public function falar()
     {
         echo 'Tuut tuttu tuutt!';
     }
 
-    public function accept(AnimalOperation $operation)
+    public function executarAcao(AcaoAnimal $operation)
     {
-        $operation->visitDolphin($this);
+        $operation->visitarGolfinho($this);
     }
 }
 ```
-Let's implement our visitor
+Vamos implementar nosso visitante, que será a ação que o animal pode fazer:
+
 ```php
-class Speak implements AnimalOperation
+class Falar implements AcaoAnimal
 {
-    public function visitMonkey(Monkey $monkey)
+    public function visitarMacaco(Macaco $macaco)
     {
-        $monkey->shout();
+        $macaco->gritar();
     }
 
-    public function visitLion(Lion $lion)
+    public function visitarLeao(Leao $leao)
     {
-        $lion->roar();
+        $leao->rugir();
     }
 
-    public function visitDolphin(Dolphin $dolphin)
+    public function visitarGolfinho(Golfinho $golfinho)
     {
-        $dolphin->speak();
+        $golfinho->falar();
     }
 }
 ```
 
 And then it can be used as
 ```php
-$monkey = new Monkey();
-$lion = new Lion();
-$dolphin = new Dolphin();
+$macaco = new Macaco();
+$leao = new Leao();
+$golfinho = new Golfinho();
 
-$speak = new Speak();
+$acaoFala = new Falar();
 
-$monkey->accept($speak);    // Ooh oo aa aa!    
-$lion->accept($speak);      // Roaaar!
-$dolphin->accept($speak);   // Tuut tutt tuutt!
+$macaco->executarAcao($acaoFala);    // Ooh oo aa aa!    
+$leao->executarAcao($acaoFala);      // Roaaar!
+$golfinho->executarAcao($acaoFala);   // Tuut tutt tuutt!
 ```
-We could have done this simply by having an inheritance hierarchy for the animals but then we would have to modify the animals whenever we would have to add new actions to animals. But now we will not have to change them. For example, let's say we are asked to add the jump behavior to the animals, we can simply add that by creating a new visitor i.e.
+
+Poderíamos ter feito isso também por simples hierarquia de herança, mas ai sempre que quisessemos adicionar uma nova ação ao animal, teríamos que modificar o objeto animal em si. Vamos, por exemplo, adicionar um novo comportamento, que é o de pular, podemos fazer isso criando um novo visitante:
 
 ```php
-class Jump implements AnimalOperation
+class Pulo implements AcaoAnimal
 {
-    public function visitMonkey(Monkey $monkey)
+    public function visitarMacaco(Macaco $macaco)
     {
-        echo 'Jumped 20 feet high! on to the tree!';
+        echo 'Pulou 6 metros para uma árvore!';
     }
 
-    public function visitLion(Lion $lion)
+    public function visitarLeao(Leao $leao)
     {
-        echo 'Jumped 7 feet! Back on the ground!';
+        echo 'Pulou 7 metros e voltou para o chão!';
     }
 
-    public function visitDolphin(Dolphin $dolphin)
+    public function visitarGolfinho(Golfinho $golfinho)
     {
-        echo 'Walked on water a little and disappeared';
+        echo 'Pulou sobre a água e depois desapareceu';
     }
 }
 ```
-And for the usage
+
+E então podemos executar:
+
 ```php
-$jump = new Jump();
+$pular = new Pulo();
 
-$monkey->accept($speak);   // Ooh oo aa aa!
-$monkey->accept($jump);    // Jumped 20 feet high! on to the tree!
+$macaco->executarAcao($acaoFala);   // Ooh oo aa aa!
+$macaco->executarAcao($pular);    // Pulou 6 metros para uma árvore!
 
-$lion->accept($speak);     // Roaaar!
-$lion->accept($jump);      // Jumped 7 feet! Back on the ground!
+$leao->executarAcao($acaoFala);     // Roaaar!
+$leao->executarAcao($pular);      // Pulou 7 metros e voltou para o chão!
 
-$dolphin->accept($speak);  // Tuut tutt tuutt!
-$dolphin->accept($jump);   // Walked on water a little and disappeared
+$golfinho->executarAcao($acaoFala);  // Tuut tutt tuutt!
+$golfinho->executarAcao($pular);   // Pulou sobre a água e depois desapareceu
 ```
 
 <a name="estrategia"></a>💡 Estratégia
 --------
 
 Exemplo do mundo real:
-> Consider the example of sorting, we implemented bubble sort but the data started to grow and bubble sort started getting very slow. In order to tackle this we implemented Quick sort. But now although the quick sort algorithm was doing better for large datasets, it was very slow for smaller datasets. In order to handle this we implemented a strategy where for small datasets, bubble sort will be used and for larger, quick sort.
+
+> O exemplo mais comum é a ordenação em vetores. Implementamos o _bubble sort_ mas os dados começaram a ficar grandes demais e o _bubble sort_ já não era mais o melhor algoritmo para ordenação, começou a ficar muito lento. Para resolver este problema, implementamos o _Quick Sort_. Mas agora, apesar de que o algoritmo está se saindo melhor para grandes massas de dados, ele está muito devagar para datasets menores... Para lidar com isso vamos ter que implementar uma lógica de alteração de regras de ordenação dependendo do tamanho do vetor, para vetores menores vamos utilizar o _bubble sorting_ e para maiores o _quick sorting_.
 
 Em palavras simples:
-> Strategy pattern allows you to switch the algorithm or strategy based upon the situation.
+
+> O padrão estratégia permite que você altere o algoritmo que será executado baseado na situação.
 
 Wikipédia diz:
-> In Computador programming, the strategy pattern (also known as the policy pattern) is a behavioural software design pattern that enables an algorithm's behavior to be selected at runtime.
+
+> Em programação de computadores, o padrão de projetos estratégia (também conhecido como padrão de política) é um padrão de projetos comportamental que permite que o comportamento de um algoritmo seja selecionado em tempo de execução.
 
 **Exemplo programático**
 
-Translating our example from above. First of all we have our strategy interface and different strategy implementations
+Traduzindo o exemplo acima, primeiramente temos que criar nossas interface de estratégia, e todas as implementações de diferentes algoritmos:
 
 ```php
-interface SortStrategy
+interface EstrategiaOrdenacao
 {
-    public function sort(array $dataset): array;
+    public function ordenar(array $dataset): array;
 }
 
-class BubbleSortStrategy implements SortStrategy
+class EstrategiaBubbleSort implements EstrategiaOrdenacao
 {
-    public function sort(array $dataset): array
+    public function ordenar(array $dataset): array
     {
-        echo "Sorting using bubble sort";
+        echo "Ordenando usando bubble sort";
 
-        // Do sorting
+        // implementação do algoritmo
         return $dataset;
     }
 }
 
-class QuickSortStrategy implements SortStrategy
+class EstrategiaQuickSort implements EstrategiaOrdenacao
 {
-    public function sort(array $dataset): array
+    public function ordenar(array $dataset): array
     {
-        echo "Sorting using quick sort";
+        echo "Ordenando usando quick sort";
 
-        // Do sorting
+        // implementação do algoritmo
         return $dataset;
     }
 }
 ```
 
-And then we have our client that is going to use any strategy
-```php
-class Sorter
-{
-    protected $sorter;
+E agora temos o cliente que vai usar esses padrões:
 
-    public function __construct(SortStrategy $sorter)
+```php
+class Ordenador
+{
+    protected $algoritmo;
+
+    public function __construct(EstrategiaOrdenacao $algoritmo)
     {
-        $this->sorter = $sorter;
+        $this->algoritmo = $algoritmo;
     }
 
-    public function sort(array $dataset): array
+    public function ordenar(array $dataset): array
     {
-        return $this->sorter->sort($dataset);
+        return $this->algoritmo->ordenar($dataset);
     }
 }
 ```
-And it can be used as
+
+Então podemos usar da seguinte maneira:
+
 ```php
 $dataset = [1, 5, 4, 3, 2, 8];
 
-$sorter = new Sorter(new BubbleSortStrategy());
-$sorter->sort($dataset); // Output : Sorting using bubble sort
+$ordenador = new Ordenador(new EstrategiaBubbleSort());
+$ordenador->ordenar($dataset); // Saída: Ordenando usando bubble sort
 
-$sorter = new Sorter(new QuickSortStrategy());
-$sorter->sort($dataset); // Output : Sorting using quick sort
+$ordenador = new Ordenador(new EstrategiaQuickSort());
+$ordenador->ordenar($dataset); // Saída: Ordenando usando quick sort
 ```
 
-<a name="estado"></a>💢 State
+Podemos ir mais além na implementação e informar a lógica que queremos nestes usos:
+
+```php
+//Função para obter nossa estratégia
+function obterEstrategia(array $dataset) : EstrategiaOrdenacao {
+
+  if(count($dataset) > 1000) { //Regra do cliente
+    return new EstrategiaQuickSort;
+  }
+
+  return new EstrategiaBubbleSort;
+}
+
+$dataset = [1, 5, 4, 3, 2, 8]; //Vetor pequeno
+$ordenador = new Ordenador(obterEstrategia($dataset)); //Estratégia retornada será bubble sort
+$ordenador->ordenar($dataset); // Saída: Ordenando usando bubble sort
+
+$dataset = range(1,10000); //Vai produzir um vetor bem grande
+$ordenador = new Ordenador(obterEstrategia($dataset)); //A regra retornada será quick sort
+$ordenador->ordenar($dataset); // Saída: Ordenando usando quick sort
+```
+
+<a name="estado"></a>💢 Estado
 -----
+
 Exemplo do mundo real:
+
 > Imagine you are using some drawing application, you choose the paint brush to draw. Now the brush changes its behavior based on the selected color i.e. if you have chosen red color it will draw in red, if blue then it will be in blue etc.  
 
 Em palavras simples:
+
 > It lets you change the behavior of a class when the state changes.
 
 Wikipédia diz:
+
 > The state pattern is a behavioral software design pattern that implements a state machine in an object-oriented way. With the state pattern, a state machine is implemented by implementing each individual state as a derived class of the state pattern interface, and implementing state transitions by invoking methods defined by the pattern's superclass.
 > The state pattern can be interpreted as a strategy pattern which is able to switch the current strategy through invocations of methods defined in the pattern's interface.
 
@@ -2353,16 +2409,21 @@ $iosBuilder->build();
 // Deploying ios build to server
 ```
 
-## 🚦 Wrap Up Folks
+## 🚦 Isso é tudo pessoal
 
-And that about wraps it up. I will continue to improve this, so you might want to watch/star this repository to revisit. Also, I have plans on writing the same about the architectural patterns, stay tuned for it.
+Basicamente creio que isto seja tudo, vamos continuar melhorando este guia, então você pode querer dar um watch/star no repositório para visitar novamente mais tarde. Estou com projetos também para escrever sobre padrões arquiteturais, então fique ligado!
 
-## 👬 Contribution
+## 👬 Contribuir
 
-- Report issues
-- Open pull request with improvements
-- Spread the word
-- Reach out to me directly at kamranahmed.se@gmail.com or on twitter [@kamranahmedse](http://twitter.com/kamranahmedse)
+- Reportar erros
+- Reportar erros de tradução
+- Abrir Pull Requests com melhorias
+- Espalhar a palavra
+- Fale com o autor diretamente em [kamranahmed.se@gmail.com](mailto:kamranahmed.se@gmail.com) ou no twitter [@kamranahmedse](http://twitter.com/kamranahmedse)
+- Fale com o tradutor diretamente em [lhs.santoss@gmail.com](mailto:lhs.santoss@gmail.com) ou no twitter [@_staticvoid](http://twitter.com/_staticvoid)
 
-## License
-MIT © [Kamran Ahmed](http://kamranahmed.info)
+## Licença
+
+MIT © [Kamran Ahmed](http://kamranahmed.info), tradução [Lucas Santos](http://lsantos.me)
+
+> Tradução feita de forma independente, sem nenhuma conexão com o autor.
