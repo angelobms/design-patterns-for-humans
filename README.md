@@ -462,7 +462,7 @@ In suma, permite que você crie uma cópia de um objeto existente e modifique-o 
 
 **Exemplo programático**
 
-Em PHP, isso pode ser facilmente feito com o  `clone`
+Em PHP, isso pode ser facilmente feito com o `clone`
 
 ```php
 class Ovelha
@@ -2202,16 +2202,17 @@ $ordenador->ordenar($dataset); // Saída: Ordenando usando quick sort
 
 Exemplo do mundo real:
 
-> Imagine you are using some drawing application, you choose the paint brush to draw. Now the brush changes its behavior based on the selected color i.e. if you have chosen red color it will draw in red, if blue then it will be in blue etc.  
+> Imagine que você está usando alguma aplicação de desenho, você escolhe a ferramenta de pincel. Agora, o pincel muda de comportamento de acordo com a cor, por exemplo, se você escolher o vermelho ele pintará em vermelho, se for azul então azul e assim por diante.
 
 Em palavras simples:
 
-> It lets you change the behavior of a class when the state changes.
+> Este padrão perite que você mude o comportamento da classe quando o estado muda.
 
 Wikipédia diz:
 
-> The state pattern is a behavioral software design pattern that implements a state machine in an object-oriented way. With the state pattern, a state machine is implemented by implementing each individual state as a derived class of the state pattern interface, and implementing state transitions by invoking methods defined by the pattern's superclass.
-> The state pattern can be interpreted as a strategy pattern which is able to switch the current strategy through invocations of methods defined in the pattern's interface.
+> O padrão estado é um padrão comportamental de desenvolvimento de software que implementa uma máquina de estados de uma forma orientada a objetos. Com o padrão estado, a máquina de estados é implementada adicionando cada um dos estados como uma classe derivada da interface de estados, e implementamos as transições de estado invocando os métodos definidos pela superclasse.
+
+> O padrão estado pode ser interpretado como um padrão estratégia que pode alterar o algoritmo corrente através de invocações de métodos definidos na interface do padrão.
 
 **Exemplo programático**
 
