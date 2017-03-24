@@ -2300,114 +2300,115 @@ $editor->type('Fifth line');
 ---------------
 
 Exemplo do mundo real:
-> Suppose we are getting some house built. The steps for building might look like
-> - Prepare the base of house
-> - Build the walls
-> - Add roof
-> - Add other floors
+> Suponha que temos que construir uma casa. Existem passos para isso, e esses passos são mais ou menos assim:
+> - Preparar a fundação
+> - Construir as paredes
+> - Adicionar o telhado
+> - Adicionar outros pisos
 
-> The order of these steps could never be changed i.e. you can't build the roof before building the walls etc but each of the steps could be modified for example walls can be made of wood or polyester or stone.
+> A ordem destes passos nunca pode ser mudada, por exemplo, você não pode construir o telhado antes de construir as paredes, mas cada passo pode ser modificado, por exemplo, as paredes podem ser feitas de alvenaria, pedra, madeira.
 
 Em palavras simples:
-> Template method defines the skeleton of how a certain algorithm could be performed, but defers the implementation of those steps to the children classes.
+> O método modelo define um esqueleto de _como_ um certo algoritmo pode ser executado, mas delega a implementação destes passos para as classes filhas.
 
 Wikipédia diz:
-> In software engineering, the template method pattern is a behavioral design pattern that defines the program skeleton of an algorithm in an operation, deferring some steps to subclasses. It lets one redefine certain steps of an algorithm without changing the algorithm's structure.
+> Em engenharia de software, o método modelo é um padrão de projetos comportamental que define o esqueleto programático de um algoritmo em uma operação, delegando alguns passos para suas subclasses. Permite que certos passos sejam redefinidos pela subclasses sem alterar a estrutura do algoritmo em si.
 
 **Exemplo programático**
 
-Imagine we have a build tool that helps us test, lint, build, generate build reports (i.e. code coverage reports, linting report etc) and deploy our app on the test server.
+Imagine que vamos construir uma ferramenta que permita que a gente gere, teste, gere relatórios de build (como cobertura e erros de sintaxe), linting e também faça deploy do nosso aplicativo para o servidor de testes.
 
-First of all we have our base class that specifies the skeleton for the build algorithm
+Primeiramente temos a nossa classe base que especifica esse esqueleto para o algoritmo:
+
 ```php
-abstract class Builder
+abstract class Construtor
 {
 
     // Template method
-    final public function build()
+    final public function construir()
     {
-        $this->test();
+        $this->testar();
         $this->lint();
-        $this->assemble();
+        $this->montar();
         $this->deploy();
     }
 
-    abstract public function test();
+    abstract public function testar();
     abstract public function lint();
-    abstract public function assemble();
+    abstract public function montar();
     abstract public function deploy();
 }
 ```
 
-Then we can have our implementations
+Então temosz nossas implementações
 
 ```php
-class AndroidBuilder extends Builder
+class ConstrutorAndroid extends Construtor
 {
-    public function test()
+    public function testar()
     {
-        echo 'Running android tests';
+        echo 'Executando testes no Android';
     }
 
     public function lint()
     {
-        echo 'Linting the android code';
+        echo 'Executando linting no Android';
     }
 
-    public function assemble()
+    public function montar()
     {
-        echo 'Assembling the android build';
+        echo 'Montando a build do Android';
     }
 
     public function deploy()
     {
-        echo 'Deploying android build to server';
+        echo 'Fazendo deploy para o servidor';
     }
 }
 
-class IosBuilder extends Builder
+class ConstrutorIos extends Construtor
 {
-    public function test()
+    public function testar()
     {
-        echo 'Running ios tests';
+        echo 'Executando testes no iOS';
     }
 
     public function lint()
     {
-        echo 'Linting the ios code';
+        echo 'Executando linting do iOS';
     }
 
-    public function assemble()
+    public function montar()
     {
-        echo 'Assembling the ios build';
+        echo 'Realizando a build do iOS';
     }
 
     public function deploy()
     {
-        echo 'Deploying ios build to server';
+        echo 'Fazendo deploy para o servidor';
     }
 }
 ```
-And then it can be used as
+Então podemos utilizar assim
 
 ```php
-$androidBuilder = new AndroidBuilder();
-$androidBuilder->build();
+$construtorAndroid = new ConstrutorAndroid();
+$construtorAndroid->construir();
 
-// Output:
-// Running android tests
-// Linting the android code
-// Assembling the android build
-// Deploying android build to server
+// Saída:
+// Executando testes no Android
+// Executando linting no android
+// Montando a build do Android
+// Fazendo deploy para o servidor
 
-$iosBuilder = new IosBuilder();
-$iosBuilder->build();
+$construtorIos = new ConstrutorIos();
+$construtorIos->construir();
 
-// Output:
-// Running ios tests
-// Linting the ios code
-// Assembling the ios build
-// Deploying ios build to server
+// Saída:
+// Executando testes no iOS
+// Executando linting do iOS
+// Realizando a build do iOS
+// Fazendo deploy para o servidor
 ```
 
 ## 🚦 Isso é tudo pessoal
