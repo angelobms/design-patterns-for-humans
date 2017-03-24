@@ -1,1161 +1,1211 @@
-![Design Patterns For Humans](https://cloud.githubusercontent.com/assets/11269635/23065273/1b7e5938-f515-11e6-8dd3-d0d58de6bb9a.png)
+![Design Patterns For Humans](https://github.com/khaosdoctor/design-patterns-for-humans/blob/master/logo.png?raw=true)
 
 ***
 <p align="center">
-🎉 Ultra-simplified explanation to design patterns! 🎉
+🎉 Um guia ultra simplificado para padrões de projeto! 🎉
 </p>
 <p align="center">
-A topic that can easily make anyone's mind wobble. Here I try to make them stick in to your mind (and maybe mine) by explaining them in the <i>simplest</i> way possible.
+Um tópico que pode confundir a mente de muita gente. Aqui eu tento fazer ele grudar na sua mente (e talvez na minha), explicando da forma <i>mais simples</i> possível.
 </p>
 ***
 
-🚀 Introduction
+❗ Notas de tradução
 =================
 
-Design patterns are solutions to recurring problems; **guidelines on how to tackle certain problems**. They are not classes, packages or libraries that you can plug into your application and wait for the magic to happen. These are, rather, guidelines on how to tackle certain problems in certain situations.
+- Alguns trechos de código foram traduzidos para que o entendimento seja melhor de acordo com o contexto inserido
+- Algumas palavras são melhor definidas em sua língua original, portanto tais palavras **não** foram traduzidas. As mesmas terão um link de referência após para melhor entendimento
+- O texto possui algumas alterações de sintaxe e estrutura para facilitar a tradução.
 
-> Design patterns are solutions to recurring problems; guidelines on how to tackle certain problems
+🚀 Introdução
+=================
 
-Wikipedia describes them as
+Padrões de projeto são soluções para problemas recorrentes. **Guias de como atacar certos problemas**. Eles não são classes, pacotes ou bibliotecas que você pode plugar na sua aplicação e esperar a mágica acontecer. Ao invés disso, eles são guias de como atacar certos problemas em situações específicas.
 
-> In software engineering, a software design pattern is a general reusable solution to a commonly occurring problem within a given context in software design. It is not a finished design that can be transformed directly into source or machine code. It is a description or template for how to solve a problem that can be used in many different situations.
+> Padrões de projeto são soluções para problemas recorrentes. Guias de como atacar certos problemas.
 
-⚠️ Be Careful
+A Wikipédia os descreve como: 
+
+> Em engenharia de software, um padrão de projeto de software é uma solução geral e reutilizável para um problema que costuma ser recorrente dentro de um contexto de design de software. Não é uma solução final que pode ser transformada diretamente em códigos fonte ou de máquina. É uma descrição, um molde de como resolver um problema que pode ser utilizado em diversas situações.
+
+⚠️ Tenha cuidado!
 -----------------
-- Design patterns are not a silver bullet to all your problems.
-- Do not try to force them; bad things are supposed to happen, if done so. Keep in mind that design patterns are solutions **to** problems, not solutions **finding** problems; so don't overthink.
-- If used in a correct place in a correct manner, they can prove to be a savior; or else they can result in a horrible mess of a code.
+- Padrões de projeto **não** são uma bala de prata para todos os seus problemas.
+- Não tente forçar o uso deles; coisas ruins acontecem quando esta regra é quebrada. Tenha em mente que padrões de projeto so soluções **para** problemas, não soluções **procurando** problemas; então não tente encaixar um padrão em todo lugar.
+- Se usados de forma e maneira corretas, eles podem ser grandes salvadores; ou também podem resultar em uma bagunça absurda de código.
 
-> Also note that the code samples below are in PHP-7, however this shouldn't stop you because the concepts are same anyways. Plus the **support for other languages is underway**.
+> Note também que os exemplos de código abaixo estão em PHP-7, no entanto isto não deve te atrapalhar porque os conceitos são os mesmos em qualquer lugar. Além do mais, **O suporte para outras linguagens no guia está em desenvolvimento**.
 
-Types of Design Patterns
+Tipos de padrões de projeto
 -----------------
 
-* [Creational](#creational-design-patterns)
-* [Structural](#structural-design-patterns)
-* [Behavioral](#behavioral-design-patterns)
+* [Criacional](#criacionais)
+* [Estrutural](#estruturais)
+* [Comportamental](#comportamentais)
 
-Creational Design Patterns
-==========================
+<a name="criacionais"></a>Padrões de projeto criacionais
+=================
 
-In plain words
-> Creational patterns are focused towards how to instantiate an object or group of related objects.
+Em palavras simples::
+> Padrões criacionais são focados em como instanciar um objeto ou um grupo de objetos relacionados.
 
-Wikipedia says
-> In software engineering, creational design patterns are design patterns that deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. The basic form of object creation could result in design problems or added complexity to the design. Creational design patterns solve this problem by somehow controlling this object creation.
+Wikipedia diz:
+> Em engenharia de software, padrões de projeto criacionais são padrões de projeto que tratam dos mecanismos de criação de objetos, tentando criar objetos de forma adequada para a situação. A forma básica de criação de um objeto pode resultar em problemas de design ou adicionar complexidade ao mesmo. Estes padrões de projeto resolvem este problema controlando de alguma forma o modo como estes objetos são criados.
 
- * [Simple Factory](#-simple-factory)
- * [Factory Method](#-factory-method)
- * [Abstract Factory](#-abstract-factory)
- * [Builder](#-builder)
- * [Prototype](#-prototype)
- * [Singleton](#-singleton)
+ * [Fábrica Simples](#fabrica-simples)
+ * [Método Fábrica](#fabrica)
+ * [Fábrica Abstrata](#fabrica-abstrata)
+ * [Construtor](#construtor)
+ * [Protótipo](#prototipo)
+ * [Singleton](#singleton)
 
-🏠 Simple Factory
+<a name="fabrica-simples"></a>🏠 Fábrica Simples
 --------------
-Real world example
-> Consider, you are building a house and you need doors. It would be a mess if every time you need a door, you put on your carpenter clothes and start making a door in your house. Instead you get it made from a factory.
+Exemplo no mundo real
+> Considere isso, você está construindo uma casa e você precisa de portas. Seria uma bagunça se, toda vez que você precisasse de uma porta, você tivesse que colocar as suas roupas de marceneiro e começasse a esculpir uma porta na sua casa. Ao invés disso, você pode obte-la de uma fábrica.
 
-In plain words
-> Simple factory simply generates an instance for client without exposing any instantiation logic to the client
+Em palavras simples:
+> A fábrica simples simplesmente gera uma instancia para o cliente sem expor nenhuma lógica de instanciação para o cliente.
 
-Wikipedia says
-> In object-oriented programming (OOP), a factory is an object for creating other objects – formally a factory is a function or method that returns objects of a varying prototype or class from some method call, which is assumed to be "new".
+Wikipedia diz
+> Em programação orientada a objetos (POO), uma fábrica é um objeto que cria outros objetos - Formalmente, uma fábrica é uma função ou método que retorna objetos de um protótipo variável ou uma classe de alguma chamada de método, assumindo ser "new" <sup>[Keyword de programação]</sup>.
 
-**Programmatic Example**
+**Exemplo programático**
 
-First of all we have a door interface and the implementation
+Primeiramente temos nossa interface "porta" e a implementação:
 ```php
-interface Door
+interface Porta
 {
-    public function getWidth(): float;
-    public function getHeight(): float;
+    public function obterComprimento(): float;
+    public function obterAltura(): float;
 }
 
-class WoodenDoor implements Door
+class PortaMadeira implements Porta
 {
-    protected $width;
-    protected $height;
+    protected $comprimento;
+    protected $altura;
 
-    public function __construct(float $width, float $height)
+    public function __construct(float $comprimento, float $altura)
     {
-        $this->width = $width;
-        $this->height = $height;
+        $this->comprimento = $comprimento;
+        $this->altura = $altura;
     }
 
-    public function getWidth(): float
+    public function obterComprimento(): float
     {
-        return $this->width;
+        return $this->comprimento;
     }
 
-    public function getHeight(): float
+    public function obterAltura(): float
     {
-        return $this->height;
-    }
-}
-```
-Then we have our door factory that makes the door and returns it
-```php
-class DoorFactory
-{
-    public static function makeDoor($width, $height): Door
-    {
-        return new WoodenDoor($width, $height);
+        return $this->altura;
     }
 }
 ```
-And then it can be used as
+
+Então temos a nossa fábrica de portas que cria uma porta e retorna ela para nós:
 ```php
-$door = DoorFactory::makeDoor(100, 200);
-echo 'Width: ' . $door->getWidth();
-echo 'Height: ' . $door->getHeight();
+class FabricaPorta
+{
+    public static function fazerPorta($comprimento, $altura): Porta
+    {
+        return new PortaMadeira($comprimento, $altura);
+    }
+}
+```
+Então pode ser usada como:
+```php
+$porta = FabricaPorta::fazerPorta(100, 200);
+echo 'Comprimento: ' . $porta->obterComprimento();
+echo 'Altura: ' . $porta->obterAltura();
 ```
 
-**When to Use?**
+**Quando usar?**
 
-When creating an object is not just a few assignments and involves some logic, it makes sense to put it in a dedicated factory instead of repeating the same code everywhere.
+Quando criar um objeto não envolve apenas algumas alocações de variáveis, mas sim alguma lógica mais complexa. Faz mais sentido colocar toda essa lógica em uma fábrica dedicada ao invés de repetir o mesmo código em todos os lugares.
 
-🏭 Factory Method
+<a name="fabrica"></a>🏭 Método Fábrica
 --------------
 
-Real world example
-> Consider the case of a hiring manager. It is impossible for one person to interview for each of the positions. Based on the job opening, she has to decide and delegate the interview steps to different people.
+Exemplo do mundo real:
+> Considere o caso de contratar um gerente. É impossível uma única pessoa entrevistar para cada posição. Então, baseado na vaga, ela tem que escolher e delegar os passos da entrevista para diferentes pessoas.
 
-In plain words
-> It provides a way to delegate the instantiation logic to child classes.
+Em palavras simples:
+> Provê um modo de delegar a lógica de instanciação para as classes filhas.
 
-Wikipedia says
-> In class-based programming, the factory method pattern is a creational pattern that uses factory methods to deal with the problem of creating objects without having to specify the exact class of the object that will be created. This is done by creating objects by calling a factory method—either specified in an interface and implemented by child classes, or implemented in a base class and optionally overridden by derived classes—rather than by calling a constructor.
+Wikipédia diz:
+> Em programação baseada em classes, o padrão método fábrica é um padrão criacional que usa métodos-fábrica para lidar com o problema de criar objetos sem ter de especificar a exata classe do objeto que será criado. Isto é feito criando objetos através de chamadas para um método fábrica - que esteja especificado em uma interface e implementado pelas classes filhas, ou implementado na classe base e opcionalmente sobrescrito pelas suas classes derivadas - ao invés de chamar um construtor.
 
- **Programmatic Example**
+ **Exemplo programático**
 
-Taking our hiring manager example above. First of all we have an interviewer interface and some implementations for it
+Vamos pegar nosso exemplo de contratação de um gerente acima. Primeiramente temos um entrevistador, que é uma interface, e algumas implementações para ele:
 
 ```php
-interface Interviewer
+interface Entrevistador
 {
-    public function askQuestions();
+    public function fazerPerguntas();
 }
 
-class Developer implements Interviewer
+class Desenvolvedor implements Entrevistador
 {
-    public function askQuestions()
+    public function fazerPerguntas()
     {
-        echo 'Asking about design patterns!';
+        echo 'Perguntando sobre padrões de projeto!';
     }
 }
 
-class CommunityExecutive implements Interviewer
+class ExecutivoComunitario implements Entrevistador
 {
-    public function askQuestions()
+    public function fazerPerguntas()
     {
-        echo 'Asking about community building';
+        echo 'Perguntando sobre comunidades';
     }
 }
 ```
 
-Now let us create our `HiringManager`
+Agora vamos criar nosso `GerenteDeContratacao`
 
 ```php
-abstract class HiringManager
+abstract class GerenteDeContratacao
 {
 
-    // Factory method
-    abstract public function makeInterviewer(): Interviewer;
+    // Método fábrica
+    abstract public function criarEntrevistador(): Entrevistador;
 
-    public function takeInterview()
+    public function fazerEntrevista()
     {
-        $interviewer = $this->makeInterviewer();
-        $interviewer->askQuestions();
+        $entrevistador = $this->criarEntrevistador();
+        $entrevistador->fazerPerguntas();
     }
 }
 
 ```
-Now any child can extend it and provide the required interviewer
+Agora, qualquer classe filha vai poder estender esta classe e prover o entrevistador necessário.
 ```php
-class DevelopmentManager extends HiringManager
+class GerenteDeDesenvolvimento extends GerenteDeContratacao
 {
-    public function makeInterviewer(): Interviewer
+    public function criarEntrevistador(): Entrevistador
     {
-        return new Developer();
+        return new Desenvolvedor();
     }
 }
 
-class MarketingManager extends HiringManager
+class GerenteDeMarketing extends GerenteDeContratacao
 {
-    public function makeInterviewer(): Interviewer
+    public function criarEntrevistador(): Entrevistador
     {
-        return new CommunityExecutive();
+        return new ExecutivoComunitario();
     }
 }
 ```
-and then it can be used as
+Então podemos usar como:
 
 ```php
-$devManager = new DevelopmentManager();
-$devManager->takeInterview(); // Output: Asking about design patterns
+$devManager = new GerenteDeDesenvolvimento();
+$devManager->fazerEntrevista(); // Saída: Perguntando sobre padrões de projeto!
 
-$marketingManager = new MarketingManager();
-$marketingManager->takeInterview(); // Output: Asking about community building.
+$marketingManager = new GerenteDeMarketing();
+$marketingManager->fazerEntrevista(); // Saída: Perguntando sobre comunidade.
 ```
 
-**When to use?**
+**Quando usar?**
 
-Useful when there is some generic processing in a class but the required sub-class is dynamically decided at runtime. Or putting it in other words, when the client doesn't know what exact sub-class it might need.
+Útil quando existe um processamento genérico em uma classe, mas a subclasse necessária é decidida dinamicamente em tempo de execução. Ou, em outras palavras, quando o cliente não sabe exatamente qual subclasse ele pode precisar.
 
-🔨 Abstract Factory
+<a name="fabrica-abstrata"></a>🔨 Fábrica Abstrata
 ----------------
 
-Real world example
-> Extending our door example from Simple Factory. Based on your needs you might get a wooden door from a wooden door shop, iron door from an iron shop or a PVC door from the relevant shop. Plus you might need a guy with different kind of specialities to fit the door, for example a carpenter for wooden door, welder for iron door etc. As you can see there is a dependency between the doors now, wooden door needs carpenter, iron door needs a welder etc.
+Exemplo do mundo real:
+> Estendendo nosso examplo com a porta na Fábrica Simples. Baseado em suas necessidades você pode precisar de uma porta de madeira de uma loja de portas de madeira, uma porta de ferro de uma loja de portas de ferro ou uma porta de plástico da loja relevante. Além disso você vai precisar de um cara com diferentes especialidades para encaxar essa porta no lugar, por exemplo, uma porta de madeira vai precisar de um marceneiro, enquanto uma porta de ferro vai precisar de um soldador. Como você pode ver, existe uma dependência entre as portas agora, a porta de madeira precisa de um amrceneiro, a de ferro de um soldador e etc.
 
-In plain words
-> A factory of factories; a factory that groups the individual but related/dependent factories together without specifying their concrete classes.
+Em palavras simples:
+> Uma fábrica de fábricas; uma fábrica que agrupa fábricas individuais, mas dependentes, juntas sem especificar suas classes concretas.
 
-Wikipedia says
-> The abstract factory pattern provides a way to encapsulate a group of individual factories that have a common theme without specifying their concrete classes
+Wikipédia diz:
+> O padrão de fábrica abstrata provê uma maneira de encapsular um grupo de fábricas individuais que tem um tema comum, sem especificar suas classes concretas.
 
-**Programmatic Example**
+**Exemplo programático**
 
-Translating the door example above. First of all we have our `Door` interface and some implementation for it
+Traduzindo nosso exemplo com a porta acima. Vamos, primeiramente, criar nossa interface `Porta`, e criar uma implementação dela.
 
 ```php
-interface Door
+interface Porta
 {
-    public function getDescription();
+    public function obterDescricao();
 }
 
-class WoodenDoor implements Door
+class PortaMadeira implements Door
 {
-    public function getDescription()
+    public function obterDescricao()
     {
-        echo 'I am a wooden door';
+        echo 'Eu sou uma porta de madeira';
     }
 }
 
-class IronDoor implements Door
+class PortaFerro implements Porta
 {
-    public function getDescription()
+    public function obterDescricao()
     {
-        echo 'I am an iron door';
+        echo 'Eu sou uma porta de ferro';
     }
 }
 ```
-Then we have some fitting experts for each door type
+Agora temos nossos experts em encaixe:
 
 ```php
-interface DoorFittingExpert
+interface ExpertEncaixePorta
 {
-    public function getDescription();
+    public function obterDescricao();
 }
 
-class Welder implements DoorFittingExpert
+class Soldador implements ExpertEncaixePorta
 {
-    public function getDescription()
+    public function obterDescricao()
     {
-        echo 'I can only fit iron doors';
+        echo 'Eu só instalo portas de ferro';
     }
 }
 
-class Carpenter implements DoorFittingExpert
+class Marceneiro implements ExpertEncaixePorta
 {
-    public function getDescription()
+    public function obterDescricao()
     {
-        echo 'I can only fit wooden doors';
+        echo 'Eu só instalo portas de madeira';
     }
 }
 ```
+Agora, nossa fábrica abstrata vai permitir que façamos uma familia de objetos relacionados, por exemplo, uma fábrica de portas de madeira vai criar uma porta de madeira e também um marceneiro, assim como a fábrica de portas de ferro vai criar uma porta de ferro e um soldador.
 
-Now we have our abstract factory that would let us make family of related objects i.e. wooden door factory would create a wooden door and wooden door fitting expert and iron door factory would create an iron door and iron door fitting expert
 ```php
-interface DoorFactory
+interface FabricaPortas
 {
-    public function makeDoor(): Door;
-    public function makeFittingExpert(): DoorFittingExpert;
+    public function fazerPorta(): Door;
+    public function fazerExpertInstalacao(): ExpertEncaixePorta;
 }
 
-// Wooden factory to return carpenter and wooden door
-class WoodenDoorFactory implements DoorFactory
+// Fábrica de madeira para retornar uma porta de madeira e um marceneiro
+class FabricaPortasMadeira implements FabricaPortas
 {
-    public function makeDoor(): Door
+    public function fazerPorta(): Porta
     {
-        return new WoodenDoor();
+        return new PortaMadeira();
     }
 
-    public function makeFittingExpert(): DoorFittingExpert
+    public function fazerExpertInstalacao(): ExpertEncaixePorta
     {
-        return new Carpenter();
+        return new Marceneiro();
     }
 }
 
-// Iron door factory to get iron door and the relevant fitting expert
-class IronDoorFactory implements DoorFactory
+// Uma fábrica de portas de ferro para retornar os objetos relevantes à portas de ferro
+class FabricaPortasFerro implements FabricaPortas
 {
-    public function makeDoor(): Door
+    public function fazerPorta(): Porta
     {
-        return new IronDoor();
+        return new PortaFerro();
     }
 
-    public function makeFittingExpert(): DoorFittingExpert
+    public function fazerExpertInstalacao(): ExpertEncaixePorta
     {
-        return new Welder();
+        return new Soldador();
     }
 }
 ```
-And then it can be used as
+E podemos usar assim:
 ```php
-$woodenFactory = new WoodenDoorFactory();
+$fabricaMadeira = new FabricaPortasMadeira();
 
-$door = $woodenFactory->makeDoor();
-$expert = $woodenFactory->makeFittingExpert();
+$porta = $fabricaMadeira->fazerPorta();
+$expert = $fabricaMadeira->fazerExpertInstalacao();
 
-$door->getDescription();  // Output: I am a wooden door
-$expert->getDescription(); // Output: I can only fit wooden doors
+$porta->obterDescricao();  // Saída: Eu sou uma porta de madeira
+$expert->obterDescricao(); // Saída: Eu só instalo portas de madeira
 
-// Same for Iron Factory
-$ironFactory = new IronDoorFactory();
+// O mesmo para a porta de ferro
+$fabricaFerro = new FabricaPortasFerro();
 
-$door = $ironFactory->makeDoor();
-$expert = $ironFactory->makeFittingExpert();
+$porta = $fabricaFerro->fazerPorta();
+$expert = $fabricaFerro->fazerExpertInstalacao();
 
-$door->getDescription();  // Output: I am an iron door
-$expert->getDescription(); // Output: I can only fit iron doors
+$porta->obterDescricao();  // Saída: Eu sou uma porta de ferro
+$expert->obterDescricao(); // Saída: Eu só instalo portas de ferro
 ```
 
-As you can see the wooden door factory has encapsulated the `carpenter` and the `wooden door` also iron door factory has encapsulated the `iron door` and `welder`. And thus it had helped us make sure that for each of the created door, we do not get a wrong fitting expert.   
+Como você pode ver, a fábrica de portas de madeira encapsulou o `marceneiro` e a `porta de madeira`, assim como a fábrica de portas de ferro encapsulou a `porta de ferro` e o `soldador`. E, logo, nos ajudou a criar uma regra de que, para cada fábrica, vamos ter sempre as portas e os experts corretos, ou seja, temos certeza de que para cada porta criada, nunca teremos o profissional de instalação errado.
 
-**When to use?**
+**Quando usar?**
 
-When there are interrelated dependencies with not-that-simple creation logic involved
+Quando existem dependências inter-relacionadas com uma lógica não muito simples de criação envolvida.
 
-👷 Builder
+<a name="construtor"></a>👷 Construtor
 --------------------------------------------
-Real world example
-> Imagine you are at Hardee's and you order a specific deal, lets say, "Big Hardee" and they hand it over to you without *any questions*; this is the example of simple factory. But there are cases when the creation logic might involve more steps. For example you want a customized Subway deal, you have several options in how your burger is made e.g what bread do you want? what types of sauces would you like? What cheese would you want? etc. In such cases builder pattern comes to the rescue.
+Exemplo do mundo real:
+> Imagine que você está no McDonald's e pede um combo especial, digamos um "Big Mac", e eles te entregam sem *nenhum tipo de questionamento*; Isto é o exemplo da fábrica simples. Mas existem casos que a lógica de criação pode envolver mais passos. Por exemplo, imagine agora que você está no Subway e quer um lanche especialmente feito por você, você tem diversas opções para escolher, por exemplo, com queijo? Com tomate? Quente? Frio? Tipo de pão e etc. Neste caso temos que usar o modelo construtor.
 
-In plain words
-> Allows you to create different flavors of an object while avoiding constructor pollution. Useful when there could be several flavors of an object. Or when there are a lot of steps involved in creation of an object.
+Em palavras simples:
+> Permite que você crie diferentes tipos de um objeto enquanto evita poluição no construtor do mesmo. É bastante útil quando um objeto tem diversos "sabores", ou seja, diversas implementações diferentes. Ou quando existem muitos passos envolvidos na criação de um objeto.
 
-Wikipedia says
-> The builder pattern is an object creation software design pattern with the intentions of finding a solution to the telescoping constructor anti-pattern.
+Wikipédia diz:
+> O padrão construtor é um padrão de projeto criacional de design de software com a intenção de encontrar uma solução para o anti-padrão chamado de construtor telescópico.
 
-Having said that let me add a bit about what telescoping constructor anti-pattern is. At one point or the other we have all seen a constructor like below:
+Tendo dito isso, vamos explicar um pouco mais o que é o *construtor telescópico*. Em algum momento das nossas vidas como programadores vimos algo assim:
 
 ```php
-public function __construct($size, $cheese = true, $pepperoni = true, $tomato = false, $lettuce = true)
+public function __construct($tamanho, $queijo = true, $pepperoni = true, $tomate = false, $alface = true)
 {
 }
 ```
 
-As you can see; the number of constructor parameters can quickly get out of hand and it might become difficult to understand the arrangement of parameters. Plus this parameter list could keep on growing if you would want to add more options in future. This is called telescoping constructor anti-pattern.
+Como você pode ver, o número de parâmetros que o construtor leva pode rápidamente sair do controle e ficar complicado de entender o seu arranjo. Além disso, a lista de parâmetros pode continuar a crescer se você decidir adicionar mais opções no futuro. Isto é conhecido por ser um *anti-padrão* <sup>O inverso de padrão de projeto</sup> chamado `construtor telescópico`.
 
-**Programmatic Example**
+**Exemplo programático**
 
-The sane alternative is to use the builder pattern. First of all we have our burger that we want to make
+Usando nosso exemplo acima. A alternativa mais sã é usar o padrão construtor. PRimeiramente temos o nosso lanche:
 
 ```php
-class Burger
+class Lanche
 {
-    protected $size;
+    protected $tamanho;
 
-    protected $cheese = false;
+    protected $queijo = false;
     protected $pepperoni = false;
-    protected $lettuce = false;
-    protected $tomato = false;
+    protected $alface = false;
+    protected $tomate = false;
 
-    public function __construct(BurgerBuilder $builder)
+    public function __construct(ConstrutorLanche $construtor)
     {
-        $this->size = $builder->size;
-        $this->cheese = $builder->cheese;
-        $this->pepperoni = $builder->pepperoni;
-        $this->lettuce = $builder->lettuce;
-        $this->tomato = $builder->tomato;
+        $this->tamanho = $construtor->tamanho;
+        $this->queijo = $construtor->queijo;
+        $this->pepperoni = $construtor->pepperoni;
+        $this->alface = $construtor->alface;
+        $this->tomate = $construtor->tomate;
     }
 }
 ```
 
-And then we have the builder
+E agora nosso construtor:
 
 ```php
-class BurgerBuilder
+class CosntrutorLanche
 {
-    public $size;
+    public $tamanho;
 
-    public $cheese = false;
+    public $queijo = false;
     public $pepperoni = false;
-    public $lettuce = false;
-    public $tomato = false;
+    public $alface = false;
+    public $tomate = false;
 
-    public function __construct(int $size)
+    public function __construct(int $tamanho)
     {
-        $this->size = $size;
+        $this->tamanho = $tamanho;
     }
 
-    public function addPepperoni()
+    public function adicionarPepperoni()
     {
         $this->pepperoni = true;
         return $this;
     }
 
-    public function addLettuce()
+    public function adicionarAlface()
     {
-        $this->lettuce = true;
+        $this->alface = true;
         return $this;
     }
 
-    public function addCheese()
+    public function adicionarQueijo()
     {
-        $this->cheese = true;
+        $this->queijo = true;
         return $this;
     }
 
-    public function addTomato()
+    public function adicionarTomate()
     {
-        $this->tomato = true;
+        $this->tomate = true;
         return $this;
     }
 
-    public function build(): Burger
+    public function montar(): Lanche
     {
-        return new Burger($this);
+        return new Lanche($this);
     }
 }
 ```
-And then it can be used as:
+
+Podemos jutar tudo em:
 
 ```php
-$burger = (new BurgerBuilder(14))
-                    ->addPepperoni()
-                    ->addLettuce()
-                    ->addTomato()
-                    ->build();
+$lanche = (new ConstrutorLanche(14))
+                    ->adicionarPepperoni()
+                    ->adicionarAlface()
+                    ->adicionarTomate()
+                    ->montar();
 ```
 
-**When to use?**
+**Quando usar?**
 
-When there could be several flavors of an object and to avoid the constructor telescoping. The key difference from the factory pattern is that; factory pattern is to be used when the creation is a one step process while builder pattern is to be used when the creation is a multi step process.
+Quando um objeto pode ter diversos "sabores" e para evitar o anti-padrão de construtor telescópico. A diferença principal entre o construtor e a fábrica é que:
 
-🐑 Prototype
+- A fábrica deve ser usada quando o processo de criação tem apenas um passo.
+- O construtor é justamente o oposto, ele funciona muito melhor quando o processo de criação é composto de vários passos.
+
+<a name="prototipo"></a>🐑 Protótipo
 ------------
-Real world example
-> Remember dolly? The sheep that was cloned! Lets not get into the details but the key point here is that it is all about cloning
+Exemplo do mundo real:
+> Lembra da Dolly? Aquela ovelha que foi clonada? Não vamos entrar nos detalhes aqui, mas o ponto chave é que isso é tudo sobre clonagem.
 
-In plain words
-> Create object based on an existing object through cloning.
+Em palavras simples:
+> Cria um objeto baseado em outro através da clonagem
 
-Wikipedia says
-> The prototype pattern is a creational design pattern in software development. It is used when the type of objects to create is determined by a prototypical instance, which is cloned to produce new objects.
+Wikipédia diz:
+> O padrão protótipo é um padrão de projeto criacional em desenvolvimento de software. É usado quando o tipo dos objetos a serem criados é determinado por uma instancia modelo, ou protótipo, que é clonada para produzir novos objetos.
 
-In short, it allows you to create a copy of an existing object and modify it to your needs, instead of going through the trouble of creating an object from scratch and setting it up.
+In suma, permite que você crie uma cópia de um objeto existente e modifique-o de acordo com suas necessidades. Ao invés de ter todo o problema de criar um objeto novo do zero e configurá-lo.
 
-**Programmatic Example**
+**Exemplo programático**
 
-In PHP, it can be easily done using `clone`
+Em PHP, isso pode ser facilmente feito com o `clone`
 
 ```php
-class Sheep
+class Ovelha
 {
-    protected $name;
-    protected $category;
+    protected $nome;
+    protected $categoria;
 
-    public function __construct(string $name, string $category = 'Mountain Sheep')
+    public function __construct(string $nome, string $categoria = 'Ovelha da montanha')
     {
-        $this->name = $name;
-        $this->category = $category;
+        $this->nome = $nome;
+        $this->categoria = $categoria;
     }
 
-    public function setName(string $name)
+    public function setNome(string $nome)
     {
-        $this->name = $name;
+        $this->nome = $nome;
     }
 
-    public function getName()
+    public function getNome()
     {
-        return $this->name;
+        return $this->nome;
     }
 
-    public function setCategory(string $category)
+    public function setCategoria(string $categoria)
     {
-        $this->category = $category;
+        $this->categoria = $categoria;
     }
 
-    public function getCategory()
+    public function getCategoria()
     {
-        return $this->category;
+        return $this->categoria;
     }
 }
 ```
-Then it can be cloned like below
+Então podemos clonar como abaixo:
 ```php
-$original = new Sheep('Jolly');
-echo $original->getName(); // Jolly
-echo $original->getCategory(); // Mountain Sheep
+$original = new Ovelha('Jolly');
+echo $original->getNome(); // Jolly
+echo $original->getCategoria(); // Ovelha da montanha
 
-// Clone and modify what is required
-$cloned = clone $original;
-$cloned->setName('Dolly');
-echo $cloned->getName(); // Dolly
-echo $cloned->getCategory(); // Mountain sheep
+// Clonamos e modificamos o que for necessário
+$clone = clone $original;
+$clone->setNome('Dolly');
+echo $clone->getNome(); // Dolly
+echo $clone->getCategoria(); // Ovelha da montanha
 ```
 
-Also you could use the magic method `__clone` to modify the cloning behavior.
+Você pode também usar o *magic method* `__clone` para modificar o comportamento da clonagem.
 
-**When to use?**
+**Quando usar?**
 
-When an object is required that is similar to existing object or when the creation would be expensive as compared to cloning.
+Quando o objeto necessário é similar ao objeto já existente ou quando a criação seria muito cara comparada com a clonagem.
 
-💍 Singleton
+<a name="singleton"></a>💍 Singleton
 ------------
-Real world example
-> There can only be one president of a country at a time. The same president has to be brought to action, whenever duty calls. President here is singleton.
+Exemplo do mundo real:
+> Um país só pode ter um presidente por vez. O mesmo presidente deve ser chamado sempre que o dever chama. O presidente aqui é o singleton.
 
-In plain words
-> Ensures that only one object of a particular class is ever created.
+Em palavras simples:
+> Certifica-se de que somente uma única instancia do objeto é criada **sempre**
 
-Wikipedia says
-> In software engineering, the singleton pattern is a software design pattern that restricts the instantiation of a class to one object. This is useful when exactly one object is needed to coordinate actions across the system.
+Wikipédia diz:
+> Em engenharia de software, o padrão singleton é um padrão de design de software que restringe a instanciação de uma classe a um unico objeto. É útil quando exatamente um objeto é necessário para coordenar ações através do sistema.
 
-Singleton pattern is actually considered an anti-pattern and overuse of it should be avoided. It is not necessarily bad and could have some valid use-cases but should be used with caution because it introduces a global state in your application and change to it in one place could affect in the other areas and it could become pretty difficult to debug. The other bad thing about them is it makes your code tightly coupled plus it mocking the singleton could be difficult.
+O padrão singleton é, na verdade, considerado um anti-padrão, logo o uso excessivo dele deve ser evitado. Ele não é necessariamente ruim e pode até ter alguns casos de uso válidos, mas ainda sim deve ser utilizado com cuidado porque introduz um estado global na aplicação, e a alteração deste estado em um lugar pode afetar outras áreas da mesma. Isso torna o o código muito difícil de debugar. O outro problema com o singleton é que ele torna seu código muito fortemente acoplado, além disso, criar um *mock*<sup>[modelo de testes]</sup> pode ser um pouco difícil.
 
-**Programmatic Example**
+**Exemplo programático**
 
-To create a singleton, make the constructor private, disable cloning, disable extension and create a static variable to house the instance
+Para criar um singleton, faça com que o construtor seja privado, desative a clonagem, desative a extensão e crie uma variável estática que vai armazenar a instância existente.
+
 ```php
-final class President
+final class Presidente
 {
-    private static $instance;
+    private static $instancia;
 
     private function __construct()
     {
-        // Hide the constructor
+        // Esconda o construtor
     }
 
-    public static function getInstance(): President
+    public static function obterInstancia(): Presidente
     {
-        if (!self::$instance) {
-            self::$instance = new self();
+        if (!self::$instancia) {
+            self::$instancia = new self();
         }
 
-        return self::$instance;
+        return self::$instancia;
     }
 
     private function __clone()
     {
-        // Disable cloning
+        // Desative a clonagem
     }
 
     private function __wakeup()
     {
-        // Disable unserialize
+        // Desative a desserialização
     }
 }
 ```
-Then in order to use
-```php
-$president1 = President::getInstance();
-$president2 = President::getInstance();
 
-var_dump($president1 === $president2); // true
+Então podemos usar:
+
+```php
+$presidente1 = Presidente::obterInstancia();
+$presidente2 = Presidente::obterInstancia();
+
+var_dump($presidente1 === $presidente2); // true
 ```
 
-Structural Design Patterns
+<a name="estruturais"></a>Padrões de projeto estruturais
 ==========================
-In plain words
-> Structural patterns are mostly concerned with object composition or in other words how the entities can use each other. Or yet another explanation would be, they help in answering "How to build a software component?"
 
-Wikipedia says
-> In software engineering, structural design patterns are design patterns that ease the design by identifying a simple way to realize relationships between entities.
+Em palavras simples:
 
- * [Adapter](#-adapter)
- * [Bridge](#-bridge)
- * [Composite](#-composite)
- * [Decorator](#-decorator)
- * [Facade](#-facade)
+> Padrões estruturais estão mais preocupados com a composição dos objetos, ou seja, como as entidades podem usar umas as outras. O até outra explicação poderia ser: Eles resolvem a pergunta de "como construir um componente de software?"
+
+Wikipédia diz:
+
+> Em engenharia de software, padrões de projeto estruturais são padrões de projeto que facilitam o design de um sistema identificando maneiras simples de criar relações entre entidades.
+
+ * [Adaptador](#adaptador)
+ * [Ponte](#ponte)
+ * [Composição](#composicao)
+ * [Decorador](#decorador)
+ * [Fachada](#fachada)
  * [Flyweight](#-flyweight)
  * [Proxy](#-proxy)
 
-🔌 Adapter
+<a name="adaptador"></a>🔌 Adaptador
 -------
-Real world example
-> Consider that you have some pictures in your memory card and you need to transfer them to your computer. In order to transfer them you need some kind of adapter that is compatible with your computer ports so that you can attach memory card to your computer. In this case card reader is an adapter.
-> Another example would be the famous power adapter; a three legged plug can't be connected to a two pronged outlet, it needs to use a power adapter that makes it compatible with the two pronged outlet.
-> Yet another example would be a translator translating words spoken by one person to another
 
-In plain words
-> Adapter pattern lets you wrap an otherwise incompatible object in an adapter to make it compatible with another class.
+Exemplo do mundo real:
 
-Wikipedia says
-> In software engineering, the adapter pattern is a software design pattern that allows the interface of an existing class to be used as another interface. It is often used to make existing classes work with others without modifying their source code.
+>Considere que você tem algumas imagens no seu cartão de memória e você precisa transferir elas para seu computador. Para fazer isso você vai precisar de algum tipo de adaptador que é compatível com a porta de entrada do seu computador para que você possa ligar o seu cartão de memória a ele. Neste caso, o leitor de cartão é um adaptdador.
 
-**Programmatic Example**
+> Um outro exemplo seria o famoso adaptador de tomadas. Uma tomada de três plugs não pode ser conectada, por exemplo, a uma saída de dois plugs, para isto é necessário utilizar um adaptador de tomadas que transforma o conector de três pontas em um conector de duas pontas.
 
-Consider a game where there is a hunter and he hunts lions.
+>Mais um exemplo ainda, seria um tradutor traduzindo palavras em uma lingua para outra entre duas pessoas de nacionalidades diferentes.
 
-First we have an interface `Lion` that all types of lions have to implement
+Em palavras simples:
+
+> Um adaptador permite que você encapsule objetos que seriam incompatíveis em um adaptador comum, de forma que eles possam se comunicar.
+
+Wikipédia diz:
+
+> Em engenharia de software, o padrão adaptador é um padrão de projetos de design que permite que uma classe de uma classe existente seja usada como outra interface. É comumente utilizada para fazer com que classes existentes se conectem com outras classes novas sem modificar seu código fonte.
+
+**Exemplo programático**
+
+Imagine um jogo, aonde temos um caçador, e este caçador caça leões.
+
+Primeiramente temos a interface `Leão` que todos os tipos de leões devem implementar.
 
 ```php
-interface Lion
+interface Leao
 {
-    public function roar();
+    public function rugir();
 }
 
-class AfricanLion implements Lion
+class LeaoAfricano implements Leao
 {
-    public function roar()
+    public function rugir()
     {
     }
 }
 
-class AsianLion implements Lion
+class LeaoAsiatico implements Leao
 {
-    public function roar()
-    {
-    }
-}
-```
-And hunter expects any implementation of `Lion` interface to hunt.
-```php
-class Hunter
-{
-    public function hunt(Lion $lion)
+    public function rugir()
     {
     }
 }
 ```
 
-Now let's say we have to add a `WildDog` in our game so that hunter can hunt that also. But we can't do that directly because dog has a different interface. To make it compatible for our hunter, we will have to create an adapter that is compatible
+E então o caçador vai esperar qualquer tipo de interface de `Leao` para poder caçar.
 
 ```php
-// This needs to be added to the game
-class WildDog
+class Cacador
 {
-    public function bark()
+    public function cacar(Leao $leao)
+    {
+    }
+}
+```
+
+Agora, imagine que vamos precisar adicionar um outro animal ao nosso jogo, digamos, um `CachorroSelvagem`, de forma que o caçador possa também caça-lo. Mas não podemos fazer isto diretamente porque o cachorro tem uma interface diferente. Para transformar em algo compatível com nosso caçador, vamos ter que criar uma adaptador.
+
+```php
+// Vamos precisar adicionar isso ao jogo
+class CachorroSelvagem
+{
+    public function latir()
     {
     }
 }
 
-// Adapter around wild dog to make it compatible with our game
-class WildDogAdapter implements Lion
+// Vamos criar um adaptador para o cachorro para transformar ele em algo compatível
+class CachorroSelvagemAdaptador implements Leao
 {
-    protected $dog;
+    protected $cachorro;
 
-    public function __construct(WildDog $dog)
+    public function __construct(CachorroSelvagem $cachorro)
     {
-        $this->dog = $dog;
+        $this->cachorro = $cachorro;
     }
 
-    public function roar()
+    public function rugir()
     {
-        $this->dog->bark();
+        //Note que sobrepomos a função rugir com o latido
+        $this->cachorro->latir();
     }
 }
 ```
-And now the `WildDog` can be used in our game using `WildDogAdapter`.
+
+Agora adicionamos o `CachorroSelvagem` no nosso jogo utilizando o `CachorroSelvagemAdaptador`
 
 ```php
-$wildDog = new WildDog();
-$wildDogAdapter = new WildDogAdapter($wildDog);
+$cachorroSelvagem = new CachorroSelvagem();
+$cachorroSelvagemAdaptador = new CachorroSelvagemAdaptador($cachorroSelvagem);
 
-$hunter = new Hunter();
-$hunter->hunt($wildDogAdapter);
+$cacador = new Cacador();
+$cacador->cacar($cachorroSelvagemAdaptador); //Implementa a interface Leao
 ```
 
-🚡 Bridge
+<a name="ponte"></a>🚡 Ponte
 ------
-Real world example
-> Consider you have a website with different pages and you are supposed to allow the user to change the theme. What would you do? Create multiple copies of each of the pages for each of the themes or would you just create separate theme and load them based on the user's preferences? Bridge pattern allows you to do the second i.e.
 
-![With and without the bridge pattern](https://cloud.githubusercontent.com/assets/11269635/23065293/33b7aea0-f515-11e6-983f-98823c9845ee.png)
+Exemplo do mundo real:
 
-In Plain Words
-> Bridge pattern is about preferring composition over inheritance. Implementation details are pushed from a hierarchy to another object with a separate hierarchy.
+> Considere que você tenha um site com diferentes paginas e você deve permitir que o usuário mude o tema destas páginas. O que você faria? Criaria multiplas cópias de cada página para cada tema existente ou simplesmente criaria um tema separado e carregaria ele como um módulo em cada página baseado nas preferências de usuário? O padrão ponte permite que você faça o segundo.
 
-Wikipedia says
-> The bridge pattern is a design pattern used in software engineering that is meant to "decouple an abstraction from its implementation so that the two can vary independently"
+![Com e sem o padrão ponte](ponte.png)
 
-**Programmatic Example**
+Em palavras simples
 
-Translating our WebPage example from above. Here we have the `WebPage` hierarchy
+> O padrão ponte é sobre preferir a composição de objetos ao invés de herança. Detalhes de implementação são passados de uma hierarquia a outro objeto com uma hierarquia separada.
+
+Wikipédia diz:
+
+> O padrão ponte é um padrão de projetos utilizado em engenharia de software com o objetivo de "desacoplar uma abstratção de sua implementação, de forma que ambas possam variar independentemente".
+
+**Exemplo programático**
+
+Traduzindo nosso exemplo acima, aqui temos a nossa hierarquia para `PaginaWeb`:
 
 ```php
-interface WebPage
+interface PaginaWeb
 {
-    public function __construct(Theme $theme);
-    public function getContent();
+    public function __construct(Tema $tema);
+    public function obterConteudo();
 }
 
-class About implements WebPage
+class Sobre implements PaginaWeb
 {
-    protected $theme;
+    protected $tema;
 
-    public function __construct(Theme $theme)
+    public function __construct(Tema $tema)
     {
-        $this->theme = $theme;
+        $this->tema = $tema;
     }
 
-    public function getContent()
+    public function obterConteudo()
     {
-        return "About page in " . $this->theme->getColor();
+        return "Página sobre em " . $this->tema->obterCor();
     }
 }
 
-class Careers implements WebPage
+class Carreiras implements PaginaWeb
 {
-    protected $theme;
+    protected $tema;
 
-    public function __construct(Theme $theme)
+    public function __construct(Tema $tema)
     {
-        $this->theme = $theme;
+        $this->tema = $tema;
     }
 
-    public function getContent()
+    public function obterConteudo()
     {
-        return "Careers page in " . $this->theme->getColor();
+        return "Página carreiras em " . $this->tema->obterCor();
     }
 }
 ```
-And the separate theme hierarchy
+E ai temos nossa hierarquia separada para o tema:
+
 ```php
 
-interface Theme
+interface Tema
 {
-    public function getColor();
+    public function obterCor();
 }
 
-class DarkTheme implements Theme
+class TemaEscuro implements Tema
 {
-    public function getColor()
+    public function obterCor()
     {
-        return 'Dark Black';
+        return 'Preto';
     }
 }
-class LightTheme implements Theme
+class TemaClaro implements Tema
 {
-    public function getColor()
+    public function obterCor()
     {
-        return 'Off white';
+        return 'Branco';
     }
 }
-class AquaTheme implements Theme
+class TemaAqua implements Tema
 {
-    public function getColor()
+    public function obterCor()
     {
-        return 'Light blue';
+        return 'Azul claro';
     }
 }
 ```
-And both the hierarchies
+
+Agora podemos juntar as duas herarquias
+
 ```php
-$darkTheme = new DarkTheme();
+$temaEscuro = new TemaEscuro();
 
-$about = new About($darkTheme);
-$careers = new Careers($darkTheme);
+$sobre = new Sobre($temaEscuro);
+$carreiras = new Carreiras($temaEscuro);
 
-echo $about->getContent(); // "About page in Dark Black";
-echo $careers->getContent(); // "Careers page in Dark Black";
+echo $sobre->obterConteudo(); // "Página sobre em Preto";
+echo $carreiras->obterConteudo(); // "Página carreiras em Preto";
 ```
 
-🌿 Composite
+<a name="composicao"></a>🌿 Composição
 -----------------
 
-Real world example
-> Every organization is composed of employees. Each of the employees has the same features i.e. has a salary, has some responsibilities, may or may not report to someone, may or may not have some subordinates etc.
+Exemplo do mundo real:
 
-In plain words
-> Composite pattern lets clients treat the individual objects in a uniform manner.
+> Toda organização é composta de funcionários. Cada funcionário tem as masmas características, por exemplo, um salário, algumas responsabilidades, podem ou não se reportar a alguém, podem ou não ter subordinados, etc.
 
-Wikipedia says
-> In software engineering, the composite pattern is a partitioning design pattern. The composite pattern describes that a group of objects is to be treated in the same way as a single instance of an object. The intent of a composite is to "compose" objects into tree structures to represent part-whole hierarchies. Implementing the composite pattern lets clients treat individual objects and compositions uniformly.
+Em palavras simples:
 
-**Programmatic Example**
+> O padrão de composição permite que os clientes tratem os objetos individuais de uma forma uniforme.
 
-Taking our employees example from above. Here we have different employee types
+Wikipédia diz:
+
+> Em engenharia de software, o padrão de composição é um padrão de projeto de particionamento. A composição descreve que um grupo de objetos deve ser tratado da mesma forma que uma instancia única de um objeto. A intenção de uma composição é "compor" objetos em estruturas de árvores para representar hierarquias. Implementar o padrão de composição permite que clientes tratem objetos individuais e composições uniformemente.
+
+**Exemplo programático**
+
+Usando o exemplo de funcionários acima. Vamos criar nossa interface de empregados:
 
 ```php
-interface Employee
+interface Funcionario
 {
-    public function __construct(string $name, float $salary);
-    public function getName(): string;
-    public function setSalary(float $salary);
-    public function getSalary(): float;
-    public function getRoles(): array;
+    public function __construct(string $nome, float $salario);
+    public function obterNome(): string;
+    public function setarSalario(float $salario);
+    public function obterSalario(): float;
+    public function obterCargo(): array;
 }
 
-class Developer implements Employee
+class Deselvolvedor implements Funcionario
 {
-    protected $salary;
-    protected $name;
+    protected $salario;
+    protected $nome;
 
-    public function __construct(string $name, float $salary)
+    public function __construct(string $nome, float $salario)
     {
-        $this->name = $name;
-        $this->salary = $salary;
+        $this->nome = $nome;
+        $this->salario = $salario;
     }
 
-    public function getName(): string
+    public function obterNome(): string
     {
-        return $this->name;
+        return $this->nome;
     }
 
-    public function setSalary(float $salary)
+    public function setarSalario(float $salario)
     {
-        $this->salary = $salary;
+        $this->salario = $salario;
     }
 
-    public function getSalary(): float
+    public function obterSalario(): float
     {
-        return $this->salary;
+        return $this->salario;
     }
 
-    public function getRoles(): array
+    public function obterCargo(): array
     {
         return $this->roles;
     }
 }
 
-class Designer implements Employee
+class Designer implements Funcionario
 {
-    protected $salary;
-    protected $name;
+    protected $salario;
+    protected $nome;
 
-    public function __construct(string $name, float $salary)
+    public function __construct(string $nome, float $salario)
     {
-        $this->name = $name;
-        $this->salary = $salary;
+        $this->nome = $nome;
+        $this->salario = $salario;
     }
 
-    public function getName(): string
+    public function obterNome(): string
     {
-        return $this->name;
+        return $this->nome;
     }
 
-    public function setSalary(float $salary)
+    public function setarSalario(float $salario)
     {
-        $this->salary = $salary;
+        $this->salario = $salario;
     }
 
-    public function getSalary(): float
+    public function obterSalario(): float
     {
-        return $this->salary;
+        return $this->salario;
     }
 
-    public function getRoles(): array
+    public function obterCargo(): array
     {
         return $this->roles;
     }
 }
 ```
 
-Then we have an organization which consists of several different types of employees
+Então temos nossa organização, que possui uma série de empregados:
 
 ```php
-class Organization
+class Organizacao
 {
-    protected $employees;
+    protected $funcionarios;
 
-    public function addEmployee(Employee $employee)
+    public function adicionarFuncionario(Funcionario $funcionario)
     {
-        $this->employees[] = $employee;
+        $this->funcionarios[] = $funcionario;
     }
 
-    public function getNetSalaries(): float
+    public function obterSalarios(): float
     {
-        $netSalary = 0;
+        $salarioLiquido = 0;
 
-        foreach ($this->employees as $employee) {
-            $netSalary += $employee->getSalary();
+        foreach ($this->funcionarios as $funcionario) {
+            $salarioLiquido += $funcionario->obterSalario();
         }
 
-        return $netSalary;
+        return $salarioLiquido;
     }
 }
 ```
 
-And then it can be used as
+Então podemos usar assim:
 
 ```php
-// Prepare the employees
-$john = new Developer('John Doe', 12000);
+// Preparamos os desenvolvedores
+$john = new Deselvolvedor('John Doe', 12000);
 $jane = new Designer('Jane', 10000);
 
-// Add them to organization
-$organization = new Organization();
-$organization->addEmployee($john);
-$organization->addEmployee($jane);
+// Adicionamos a uma organização
+$empresa = new Organization();
+$empresa->adicionarFuncionario($john);
+$empresa->adicionarFuncionario($jane);
 
-echo "Net salaries: " . $organization->getNetSalaries(); // Net Salaries: 22000
+echo "Salários liquidos: " . $empresa->obterSalarios(); // Salários liquidos: 22000
 ```
 
-☕ Decorator
+<a name="decorador"></a>☕ Decorador
 -------------
 
-Real world example
+Exemplo do mundo real:
 
-> Imagine you run a car service shop offering multiple services. Now how do you calculate the bill to be charged? You pick one service and dynamically keep adding to it the prices for the provided services till you get the final cost. Here each type of service is a decorator.
+> Imagine que você possui uma oficina mecânica, que oferece diversos tipos de serviços. Agora como você calcula o preço total da conta? Você pega um serviço e dinamicamente adiciona os preços dos serviços subsequentes até você ter o custo final. Neste caso, cada tipo de serviço é um decorador.
 
-In plain words
-> Decorator pattern lets you dynamically change the behavior of an object at run time by wrapping them in an object of a decorator class.
+Em palavras simples:
 
-Wikipedia says
-> In object-oriented programming, the decorator pattern is a design pattern that allows behavior to be added to an individual object, either statically or dynamically, without affecting the behavior of other objects from the same class. The decorator pattern is often useful for adhering to the Single Responsibility Principle, as it allows functionality to be divided between classes with unique areas of concern.
+> O padrão decorador permite que você dinamicamente altere o comportamento de um objeto em tempo de execução encapsulando todos em um objeto de decoração.
 
-**Programmatic Example**
+Wikipédia diz:
 
-Lets take coffee for example. First of all we have a simple coffee implementing the coffee interface
+> Em programação orientada a objetos (POO), o padrão decorador é um padrão de projetos que permite que um comportamento seja adicionado a um objeto individual, tanto dinamica quanto estaticamente, sem afetar o comportamento de outros objetos da mesma classe. O decorador é bastante útil para aderir ao Princípio de Responsabilidade Única, pois permite que a funcionalidade seja dividida entre as classes com áreas de responsabilidade únicas.
+
+**Exemplo programático**
+
+Vamos imaginar um café. Primeiramente temos um café simples, implementando uma interface de café:
 
 ```php
-interface Coffee
+interface Cafe
 {
-    public function getCost();
-    public function getDescription();
+    public function obterCusto();
+    public function obterDescricao();
 }
 
-class SimpleCoffee implements Coffee
+class CafeSimples implements Cafe
 {
-    public function getCost()
+    public function obterCusto()
     {
         return 10;
     }
 
-    public function getDescription()
+    public function obterDescricao()
     {
-        return 'Simple coffee';
-    }
-}
-```
-We want to make the code extensible to allow options to modify it if required. Lets make some add-ons (decorators)
-```php
-class MilkCoffee implements Coffee
-{
-    protected $coffee;
-
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
-    }
-
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 2;
-    }
-
-    public function getDescription()
-    {
-        return $this->coffee->getDescription() . ', milk';
-    }
-}
-
-class WhipCoffee implements Coffee
-{
-    protected $coffee;
-
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
-    }
-
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 5;
-    }
-
-    public function getDescription()
-    {
-        return $this->coffee->getDescription() . ', whip';
-    }
-}
-
-class VanillaCoffee implements Coffee
-{
-    protected $coffee;
-
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
-    }
-
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 3;
-    }
-
-    public function getDescription()
-    {
-        return $this->coffee->getDescription() . ', vanilla';
+        return 'Café simples';
     }
 }
 ```
 
-Lets make a coffee now
+Queremos fazer com que este código seja estensível para permitir opções de modificações no café. Vamos fazer alguns add-ons (decoradores):
 
 ```php
-$someCoffee = new SimpleCoffee();
-echo $someCoffee->getCost(); // 10
-echo $someCoffee->getDescription(); // Simple Coffee
+class CafeComLeite implements Cafe
+{
+    protected $cafe;
 
-$someCoffee = new MilkCoffee($someCoffee);
-echo $someCoffee->getCost(); // 12
-echo $someCoffee->getDescription(); // Simple Coffee, milk
+    public function __construct(Cafe $cafe)
+    {
+        $this->cafe = $cafe;
+    }
 
-$someCoffee = new WhipCoffee($someCoffee);
-echo $someCoffee->getCost(); // 17
-echo $someCoffee->getDescription(); // Simple Coffee, milk, whip
+    public function obterCusto()
+    {
+        return $this->cafe->obterCusto() + 2;
+    }
 
-$someCoffee = new VanillaCoffee($someCoffee);
-echo $someCoffee->getCost(); // 20
-echo $someCoffee->getDescription(); // Simple Coffee, milk, whip, vanilla
+    public function obterDescricao()
+    {
+        return $this->cafe->obterDescricao() . ', leite';
+    }
+}
+
+class CafeBatido implements Cafe
+{
+    protected $cafe;
+
+    public function __construct(Cafe $cafe)
+    {
+        $this->cafe = $cafe;
+    }
+
+    public function obterCusto()
+    {
+        return $this->cafe->obterCusto() + 5;
+    }
+
+    public function obterDescricao()
+    {
+        return $this->cafe->obterDescricao() . ', batido';
+    }
+}
+
+class CafeComBaunilha implements Cafe
+{
+    protected $cafe;
+
+    public function __construct(Cafe $cafe)
+    {
+        $this->cafe = $cafe;
+    }
+
+    public function obterCusto()
+    {
+        return $this->cafe->obterCusto() + 3;
+    }
+
+    public function obterDescricao()
+    {
+        return $this->cafe->obterDescricao() . ', baunilha';
+    }
+}
 ```
 
-📦 Facade
+Vamos fazer nosso café agora:
+
+```php
+$umCafe = new CafeSimples();
+echo $umCafe->obterCusto(); // 10
+echo $umCafe->obterDescricao(); // Café simples
+
+$umCafe = new CafeComLeite($umCafe);
+echo $umCafe->obterCusto(); // 12
+echo $umCafe->obterDescricao(); // Café simples, leite
+
+$umCafe = new CafeBatido($umCafe);
+echo $umCafe->obterCusto(); // 17
+echo $umCafe->obterDescricao(); // Café simples, leite, batido
+
+$umCafe = new CafeComBaunilha($umCafe);
+echo $umCafe->obterCusto(); // 20
+echo $umCafe->obterDescricao(); // Café simples, leite, batido, baunilha
+```
+
+<a name="fachada"></a>📦 Fachada
 ----------------
 
-Real world example
-> How do you turn on the computer? "Hit the power button" you say! That is what you believe because you are using a simple interface that computer provides on the outside, internally it has to do a lot of stuff to make it happen. This simple interface to the complex subsystem is a facade.
+Exemplo do mundo real:
 
-In plain words
-> Facade pattern provides a simplified interface to a complex subsystem.
+> Como você liga seu computador? "Aperto o botão de ligar", você vai dizer, certo? Isto que você acredita porque você está usando uma interface simples que o computador provê do lado de fora, internamente ele precisa fazer muito mais coisas para isto acontecer. A interface simples para um subsistema complexo é a fachada.
 
-Wikipedia says
-> A facade is an object that provides a simplified interface to a larger body of code, such as a class library.
+Em palavras simples:
 
-**Programmatic Example**
+> O padrão de fachada provê uma interface simplificada para um subsistema complexo.
 
-Taking our computer example from above. Here we have the computer class
+Wikipédia diz:
+
+> A fachada é um objeto que provê uma interface simplificada para um corpo de código maior, como uma biblioteca.
+
+**Exemplo programático**
+
+Vamos usar nosso exemplo do computador. Primeiro, implementamos nossa interface do computador:
 
 ```php
-class Computer
+class Computador
 {
-    public function getElectricShock()
+    public function levarChoque()
     {
         echo "Ouch!";
     }
 
-    public function makeSound()
+    public function fazerSom()
     {
         echo "Beep beep!";
     }
 
-    public function showLoadingScreen()
+    public function mostrarTelaLoading()
     {
-        echo "Loading..";
+        echo "Carregando...";
     }
 
-    public function bam()
+    public function pronto()
     {
-        echo "Ready to be used!";
+        echo "Pronto para usar!";
     }
 
-    public function closeEverything()
+    public function fecharTudo()
     {
         echo "Bup bup bup buzzzz!";
     }
 
-    public function sooth()
+    public function desligar()
     {
         echo "Zzzzz";
     }
 
-    public function pullCurrent()
+    public function puxarCorrente()
     {
         echo "Haaah!";
     }
 }
 ```
+
 Here we have the facade
+
 ```php
-class ComputerFacade
+class ComputadorFachada
 {
-    protected $computer;
+    protected $computador;
 
-    public function __construct(Computer $computer)
+    public function __construct(Computador $computador)
     {
-        $this->computer = $computer;
+        $this->computador = $computador;
     }
 
-    public function turnOn()
+    public function ligar()
     {
-        $this->computer->getElectricShock();
-        $this->computer->makeSound();
-        $this->computer->showLoadingScreen();
-        $this->computer->bam();
+        $this->computador->levarChoque();
+        $this->computador->fazerSom();
+        $this->computador->mostrarTelaLoading();
+        $this->computador->pronto();
     }
 
-    public function turnOff()
+    public function desligar()
     {
-        $this->computer->closeEverything();
-        $this->computer->pullCurrent();
-        $this->computer->sooth();
+        $this->computador->fecharTudo();
+        $this->computador->puxarCorrente();
+        $this->computador->desligar();
     }
 }
 ```
 Now to use the facade
 ```php
-$computer = new ComputerFacade(new Computer());
-$computer->turnOn(); // Ouch! Beep beep! Loading.. Ready to be used!
-$computer->turnOff(); // Bup bup buzzz! Haah! Zzzzz
+$computador = new ComputadorFachada(new Computador());
+$computador->ligar(); // Ouch! Beep beep! Carregando... Pronto para usar!
+$computador->desligar(); // Bup bup buzzz! Haah! Zzzzz
 ```
 
 🍃 Flyweight
 ---------
 
-Real world example
-> Did you ever have fresh tea from some stall? They often make more than one cup that you demanded and save the rest for any other customer so to save the resources e.g. gas etc. Flyweight pattern is all about that i.e. sharing.
+Exemplo do mundo real:
 
-In plain words
-> It is used to minimize memory usage or computational expenses by sharing as much as possible with similar objects.
+> Você já tomou algum chá gelado de algum quiosque? Eles sempre fazem mais do que uma taça e guardam o resto para qualquer outro cliente, então, para guardar recursos, por exemplo, gás, agua e etc. O padrão FlyWeight é somente sobre isso, compartilhamento.
 
-Wikipedia says
-> In computer programming, flyweight is a software design pattern. A flyweight is an object that minimizes memory use by sharing as much data as possible with other similar objects; it is a way to use objects in large numbers when a simple repeated representation would use an unacceptable amount of memory.
+Em palavras simples:
 
-**Programmatic example**
+> É utilizado para minimizar o uso de memória ou recursos computacionais através de compartilhamento com outros objetos similares.
 
-Translating our tea example from above. First of all we have tea types and tea maker
+Wikipédia diz:
+
+> Em programação de computadores, flyweight é um padrão de desenvolvimento de software. Um flyweight é um objeto que minimiza o uso de memória através do compartilhamento do máximo possível de dados com outros objetos similares; É uma forma de usar objetos em grandes números quando uma representação simples e repetitiva usaria uma quantidade de memória inaceitável.
+
+**Exemplo programático**
+
+Traduzindo o exemplo. Primeiramente temos nossas implementações do chá e do cozinheiro.
 
 ```php
-// Anything that will be cached is flyweight.
-// Types of tea here will be flyweights.
-class KarakTea
+// Qualquer coisa que for cacheada é um flyweight.
+// Aqui, os tipos de chá serão os flyweights
+class ChaKarak
 {
 }
 
-// Acts as a factory and saves the tea
-class TeaMaker
+// Age como uma fábrica, salva o chá
+class Cozinheiro
 {
-    protected $availableTea = [];
+    protected $chaDisponivel = [];
 
-    public function make($preference)
+    public function fazer($preferencia)
     {
-        if (empty($this->availableTea[$preference])) {
-            $this->availableTea[$preference] = new KarakTea();
+        if (empty($this->chaDisponivel[$preferencia])) {
+            $this->chaDisponivel[$preferencia] = new ChaKarak();
         }
 
-        return $this->availableTea[$preference];
+        return $this->chaDisponivel[$preferencia];
     }
 }
 ```
 
-Then we have the `TeaShop` which takes orders and serves them
+Agora temos a nossa `LojaCha` que pega os pedidos e os serve.
 
 ```php
-class TeaShop
+class LojaCha
 {
-    protected $orders;
-    protected $teaMaker;
+    protected $pedidos;
+    protected $cozinheiro;
 
-    public function __construct(TeaMaker $teaMaker)
+    public function __construct(Cozinheiro $cozinheiro)
     {
-        $this->teaMaker = $teaMaker;
+        $this->cozinheiro = $cozinheiro;
     }
 
-    public function takeOrder(string $teaType, int $table)
+    public function pegarPedido(string $tipoCha, int $mesa)
     {
-        $this->orders[$table] = $this->teaMaker->make($teaType);
+        $this->pedidos[$mesa] = $this->cozinheiro->fazer($tipoCha);
     }
 
-    public function serve()
+    public function servir()
     {
-        foreach ($this->orders as $table => $tea) {
-            echo "Serving tea to table# " . $table;
+        foreach ($this->pedidos as $mesa => $cha) {
+            echo "Servindo chá para mesa #" . $mesa;
         }
     }
 }
@@ -1163,401 +1213,432 @@ class TeaShop
 And it can be used as below
 
 ```php
-$teaMaker = new TeaMaker();
-$shop = new TeaShop($teaMaker);
+$cozinheiro = new Cozinheiro();
+$loja = new LojaCha($cozinheiro);
 
-$shop->takeOrder('less sugar', 1);
-$shop->takeOrder('more milk', 2);
-$shop->takeOrder('without sugar', 5);
+$loja->pegarPedido('menos açucar', 1);
+$loja->pegarPedido('mais leite', 2);
+$loja->pegarPedido('sem açucar', 5);
 
-$shop->serve();
-// Serving tea to table# 1
-// Serving tea to table# 2
-// Serving tea to table# 5
+$loja->servir();
+// Servindo chá para mesa #1
+// Servindo chá para mesa #2
+// Servindo chá para mesa #5
 ```
 
 🎱 Proxy
 -------------------
-Real world example
-> Have you ever used an access card to go through a door? There are multiple options to open that door i.e. it can be opened either using access card or by pressing a button that bypasses the security. The door's main functionality is to open but there is a proxy added on top of it to add some functionality. Let me better explain it using the code example below.
 
-In plain words
-> Using the proxy pattern, a class represents the functionality of another class.
+Exemplo do mundo real:
 
-Wikipedia says
-> A proxy, in its most general form, is a class functioning as an interface to something else. A proxy is a wrapper or agent object that is being called by the client to access the real serving object behind the scenes. Use of the proxy can simply be forwarding to the real object, or can provide additional logic. In the proxy extra functionality can be provided, for example caching when operations on the real object are resource intensive, or checking preconditions before operations on the real object are invoked.
+> Você já teve que usar um cartão de acesso para abrir alguma porta? Existem múltiplas opções para abrir aquela porta, por exemplo, um cartão de acesso ou então um botão que desativa a segurança. A principal funcionalidade da porta é abrir, mas existe um proxy adicionado sobre ela para criar funcionalidades adicionais. Vamos explicar melhor usando o exemplo abaixo.
 
-**Programmatic Example**
+Em palavras simples:
 
-Taking our security door example from above. Firstly we have the door interface and an implementation of door
+> Usando o padrão proxy, uma classe representa uma funcionalidade de outra classe.
+
+Wikipédia diz:
+
+> Um proxy, na sua forma mais geral, é uma classe funcionando com interface para alguma outra coisa. Um proxy é um encapsulamento ou um objeto agente que é chamado pelo cliente para acessar o objeto servidor real por baixo dos panos. Um uso do proxy pode ser simplesmente redirecionar para o objeto real, ou então prover lógicas extras. No proxy, novas funcionalidades podem ser implementadas, por exemplo, cache de operações quando as mesmas no objeto real são de custo intenso, ou então checar pré-condições antes de operações serem executadas em tais objetos.
+
+**Exemplo programático**
+
+Vamos utilizar nosso exemplo da porta acima, primeiramente implementamos a interface para uma porta:
 
 ```php
-interface Door
+interface Porta
 {
-    public function open();
-    public function close();
+    public function abrir();
+    public function fechar();
 }
 
-class LabDoor implements Door
+class PortaLaboratorio implements Porta
 {
-    public function open()
+    public function abrir()
     {
-        echo "Opening lab door";
+        echo "Abrindo porta do laboratório";
     }
 
-    public function close()
+    public function fechar()
     {
-        echo "Closing the lab door";
+        echo "Fechando porta do laboratório";
     }
 }
 ```
-Then we have a proxy to secure any doors that we want
-```php
-class Security
-{
-    protected $door;
 
-    public function __construct(Door $door)
+Agora criamos um proxy para adicionar segurança a qualquer tipo de porta que quisermos: 
+
+```php
+class Seguranca
+{
+    protected $porta;
+
+    public function __construct(Porta $porta)
     {
-        $this->door = $door;
+        $this->porta = $porta;
     }
 
-    public function open($password)
+    public function open($senha)
     {
-        if ($this->authenticate($password)) {
-            $this->door->open();
+        if ($this->autenticar($senha)) {
+            $this->porta->abrir();
         } else {
-            echo "Big no! It ain't possible.";
+            echo "Opa! Não é possível!";
         }
     }
 
-    public function authenticate($password)
+    public function autenticar($senha)
     {
-        return $password === '$ecr@t';
+        return $senha === '$ecr@t';
     }
 
-    public function close()
+    public function fechar()
     {
-        $this->door->close();
+        $this->porta->fechar();
     }
 }
 ```
-And here is how it can be used
+
+E aqui está o uso:
+
 ```php
-$door = new Security(new LabDoor());
-$door->open('invalid'); // Big no! It ain't possible.
+$porta = new Seguranca(new PortaLaboratorio());
+$porta->abrir('invalida'); // Opa! Não é possível!
 
-$door->open('$ecr@t'); // Opening lab door
-$door->close(); // Closing lab door
+$porta->abrir('$ecr@t'); // Abrindo porta do laboratório
+$porta->fechar(); // Fechando porta do laboratório
 ```
-Yet another example would be some sort of data-mapper implementation. For example, I recently made an ODM (Object Data Mapper) for MongoDB using this pattern where I wrote a proxy around mongo classes while utilizing the magic method `__call()`. All the method calls were proxied to the original mongo class and result retrieved was returned as it is but in case of `find` or `findOne` data was mapped to the required class objects and the object was returned instead of `Cursor`.
 
-Behavioral Design Patterns
+Ainda, um novo exemplo seria algum tipo de implementação de mapeamento de dados. Por exemplo, recentemente fiz um ODM (Object Data Mapper) para MongoDB usando este padrão, onde escrevi um proxy ao redor das classes do mongo enquanto utilizava o _magic method_ `__call()`. Todas as chamadas de métodos eram roteadas para a classe original do mongo e o resultado era retornado da forma original, mas no caso do uso da função `find` ou `findOne`, o dado era mapeado para a classe requerida e o objeto era retornado ao invés de um `Cursor`.
+
+<a name="comportamentais"></a>Padrões de projeto comportamentais
 ==========================
 
-In plain words
-> It is concerned with assignment of responsibilities between the objects. What makes them different from structural patterns is they don't just specify the structure but also outline the patterns for message passing/communication between them. Or in other words, they assist in answering "How to run a behavior in software component?"
+Em palavras simples:
 
-Wikipedia says
-> In software engineering, behavioral design patterns are design patterns that identify common communication patterns between objects and realize these patterns. By doing so, these patterns increase flexibility in carrying out this communication.
+> Estão preocupados com a delegação de responsabilidades entre os objetos. O que torna esta caregoria diferente dos estruturais é que eles não só especificam a estrutura, mas também as regras e padrões de comunicação entre os objetos. Em outras palavras, eles ajudam a responder a pergunta: "Como executar um comportamento em um componente de software?".
 
-* [Chain of Responsibility](#-chain-of-responsibility)
-* [Command](#-command)
-* [Iterator](#-iterator)
-* [Mediator](#-mediator)
+Wikipédia diz:
+
+> Em Engenharia de Software, padrões de projeto comportamentais são modelos de projeto que identificam padrões de comunicações comuns entre objetos. Desta forma, este tipo de padrões aumentam a flexibilidade e facilidade desta comunicação acontecer.
+
+* [Cadeia de Responsabilidade](#cadeia)
+* [Comando](#comando)
+* [Iterador](#iterador)
+* [Mediador](#mediador)
 * [Memento](#-memento)
-* [Observer](#-observer)
-* [Visitor](#-visitor)
-* [Strategy](#-strategy)
-* [State](#-state)
-* [Template Method](#-template-method)
+* [Observador](#observador)
+* [Visitante](#visitante)
+* [Estratégia](#estrategia)
+* [Estado](#estado)
+* [Método Modelo](#template)
 
-🔗 Chain of Responsibility
+<a name="cadeia"></a>🔗 Cadeia de Responsabilidade
 -----------------------
 
-Real world example
-> For example, you have three payment methods (`A`, `B` and `C`) setup in your account; each having a different amount in it. `A` has 100 USD, `B` has 300 USD and `C` having 1000 USD and the preference for payments is chosen as `A` then `B` then `C`. You try to purchase something that is worth 210 USD. Using Chain of Responsibility, first of all account `A` will be checked if it can make the purchase, if yes purchase will be made and the chain will be broken. If not, request will move forward to account `B` checking for amount if yes chain will be broken otherwise the request will keep forwarding till it finds the suitable handler. Here `A`, `B` and `C` are links of the chain and the whole phenomenon is Chain of Responsibility.
+Exemplo do mundo real:
 
-In plain words
-> It helps building a chain of objects. Request enters from one end and keeps going from object to object till it finds the suitable handler.
+> Por exemplo, você tem três meios de pagamento (`A`, `B` e `C`) já cadastrados em sua conta em algum site. Cada um deles possui uma quantidade de dinheiro. O `A` tem R$100,00, `B` possui R$300,00 e o `C` tem R$1000,00, e a preferência de pagamento sempre segue: Primeiro `A`, depois `B` e então `C`. Você tenta comprar alguma coisa que vale R$210,00. Usando a Cadeia de Responsabilidade, primeiramente a conta `A` será verificada para saber se possui valor suficiente para fazer a compra, se sim, então a compra será feita e a cadeia quebrada. Se não, a requisição irá para frente para a conta `B`, checando a quantidade novamente, se sim, a cadeia será quebrada, caso contrário a requisição continuará se movendo para frente até que encontre uma conta aceitável. Aqui `A`, `B` e `C` são elos da cadeia, e o fenômeno todo é a cadeia de responsabilidade.
 
-Wikipedia says
-> In object-oriented design, the chain-of-responsibility pattern is a design pattern consisting of a source of command objects and a series of processing objects. Each processing object contains logic that defines the types of command objects that it can handle; the rest are passed to the next processing object in the chain.
+Em palavras simples:
 
-**Programmatic Example**
+> Ajuda a construir uma cadeia de objetos. A requisição entra por um lado e continua de objeto a objeto até chegar em um objeto aceitável.
 
-Translating our account example above. First of all we have a base account having the logic for chaining the accounts together and some accounts
+Wikipédia diz:
+
+> Em design orientado à objetos, o padrão da cadeia de responsabilidade é um padrão de projetos que consiste em uma sequência de objetos de origem e uma sequência de objetos de processamento. Cada objeto de processamento contém a lógica que define que tipos de comando o objeto em questão pode lidar. O resto é passado para o objeto de processamento seguinte na cadeia.
+
+**Exemplo programático**
+
+Vamos traduzir nosso exemplo com as contas, primeiramente temos a nossa conta base:
 
 ```php
-abstract class Account
+abstract class Conta
 {
     protected $successor;
-    protected $balance;
+    protected $saldo;
 
-    public function setNext(Account $account)
+    public function setarProximo(Conta $conta)
     {
-        $this->successor = $account;
+        $this->successor = $conta;
     }
 
-    public function pay(float $amountToPay)
+    public function pagar(float $quantidadeAPagar)
     {
-        if ($this->canPay($amountToPay)) {
-            echo sprintf('Paid %s using %s' . PHP_EOL, $amountToPay, get_called_class());
+        if ($this->podePagar($quantidadeAPagar)) {
+            echo sprintf('Pago %s usando %s' . PHP_EOL, $quantidadeAPagar, get_called_class());
         } elseif ($this->successor) {
-            echo sprintf('Cannot pay using %s. Proceeding ..' . PHP_EOL, get_called_class());
-            $this->successor->pay($amountToPay);
+            echo sprintf('Não é possível pagar usando %s. Continuando ...' . PHP_EOL, get_called_class());
+            $this->successor->pagar($quantidadeAPagar);
         } else {
-            throw new Exception('None of the accounts have enough balance');
+            throw new Exception('Nenhuma das contas tem saldo suficiente');
         }
     }
 
-    public function canPay($amount): bool
+    public function podePagar($quantia): bool
     {
-        return $this->balance >= $amount;
+        return $this->saldo >= $quantia;
     }
 }
 
-class Bank extends Account
+class Banco extends Conta
 {
-    protected $balance;
+    protected $saldo;
 
-    public function __construct(float $balance)
+    public function __construct(float $saldo)
     {
-        $this->balance = $balance;
+        $this->saldo = $saldo;
     }
 }
 
-class Paypal extends Account
+class Paypal extends Conta
 {
-    protected $balance;
+    protected $saldo;
 
-    public function __construct(float $balance)
+    public function __construct(float $saldo)
     {
-        $this->balance = $balance;
+        $this->saldo = $saldo;
     }
 }
 
-class Bitcoin extends Account
+class Bitcoin extends Conta
 {
-    protected $balance;
+    protected $saldo;
 
-    public function __construct(float $balance)
+    public function __construct(float $saldo)
     {
-        $this->balance = $balance;
+        $this->saldo = $saldo;
     }
 }
 ```
 
-Now let's prepare the chain using the links defined above (i.e. Bank, Paypal, Bitcoin)
+Vamos preparar a cadeia seguindo a ordem acima (Ex: Bank, Paypal, Bitcoin)
 
 ```php
-// Let's prepare a chain like below
-//      $bank->$paypal->$bitcoin
+// A ordem da cadeia será igual a abaixo
+//      $banco->$paypal->$bitcoin
 //
-// First priority bank
-//      If bank can't pay then paypal
-//      If paypal can't pay then bit coin
+// Primeiramente o banco
+//      Se o banco não puder pagar, então paypal
+//        Se o paypal não puder então o BitCoin
 
-$bank = new Bank(100);          // Bank with balance 100
-$paypal = new Paypal(200);      // Paypal with balance 200
-$bitcoin = new Bitcoin(300);    // Bitcoin with balance 300
+$banco = new Banco(100);          // Banco com saldo 100
+$paypal = new Paypal(200);      // Paypal com saldo 200
+$bitcoin = new Bitcoin(300);    // Bitcoin com saldo 300
 
-$bank->setNext($paypal);
-$paypal->setNext($bitcoin);
+$banco->setarProximo($paypal);
+$paypal->setarProximo($bitcoin);
 
-// Let's try to pay using the first priority i.e. bank
-$bank->pay(259);
+// Vamos tentar pagar usando a primeira prioridade da lista, o banco
+$banco->pagar(259);
 
-// Output will be
+// A saída vai ser
 // ==============
-// Cannot pay using bank. Proceeding ..
-// Cannot pay using paypal. Proceeding ..:
-// Paid 259 using Bitcoin!
+// Não é possível pagar usando o banco. Continuando ...:
+// Não é possível pagar usando PayPal. Continuando...:
+// Pago 259 usando BitCoin
 ```
 
-👮 Command
+<a name="comando"></a>👮 Comando
 -------
 
-Real world example
-> A generic example would be you ordering a food at restaurant. You (i.e. `Client`) ask the waiter (i.e. `Invoker`) to bring some food (i.e. `Command`) and waiter simply forwards the request to Chef (i.e. `Receiver`) who has the knowledge of what and how to cook.
-> Another example would be you (i.e. `Client`) switching on (i.e. `Command`) the television (i.e. `Receiver`) using a remote control (`Invoker`).
+Exemplo do mundo real:
 
-In plain words
-> Allows you to encapsulate actions in objects. The key idea behind this pattern is to provide the means to decouple client from receiver.
+> Um exemplo bem genérico seria pedir comida em um restaurante. Você (`Cliente`) pede ao garçom (`Invocador`) para trazer comida (`Comando`) e o garçom simplesmente passa a requisição a diante para o chef (`Receptor`) que possui o conhecimento de como e o que cozinhar.
 
-Wikipedia says
-> In object-oriented programming, the command pattern is a behavioral design pattern in which an object is used to encapsulate all information needed to perform an action or trigger an event at a later time. This information includes the method name, the object that owns the method and values for the method parameters.
+> Outro exemplo seria você (`Cliente`) trocando de canais (`Comando`) na televisão (`Receptor`) usando o controle remoto (`Invocador`).
 
-**Programmatic Example**
+Em palavras simples:
 
-First of all we have the receiver that has the implementation of every action that could be performed
+> Permite que você encapsule ações em objetos. A ideia chave por trás deste padrão e prover uma maneira de desacoplar o cliente do receptor.
+
+Wikipédia diz:
+
+> Em POO, o padrão comando é um padrão de projetos comportamental no qual um objeto é usado para encapsular toda a informação necessárias para executar uma ação ou acionar um evento mais adiante no fluxo de execução. Estas informações incluem o nome do método, o objeto que é dono deste método e os valores para os parâmetros do métoso.
+
+**Exemplo programático**
+
+Primeiramente temos o nosso receptor, que tem a implementação de todas as ações que podem ser executadas:
+
 ```php
-// Receiver
-class Bulb
+// Receptor
+class Luz
 {
-    public function turnOn()
+    public function ligar()
     {
-        echo "Bulb has been lit";
+        echo "Luz foi ligada";
     }
 
-    public function turnOff()
+    public function desligar()
     {
-        echo "Darkness!";
+        echo "Escuridão!";
     }
 }
 ```
-then we have an interface that each of the commands are going to implement and then we have a set of commands
+
+Depois temos a interface que cada comando vai implementar e então o conjunto de comandos:
+
 ```php
-interface Command
+interface Commando
 {
-    public function execute();
-    public function undo();
-    public function redo();
+    public function executar();
+    public function desfazer();
+    public function refazer();
 }
 
-// Command
-class TurnOn implements Command
+// Commando
+class Ligar implements Commando
 {
-    protected $bulb;
+    protected $luz;
 
-    public function __construct(Bulb $bulb)
+    public function __construct(Luz $luz)
     {
-        $this->bulb = $bulb;
+        $this->luz = $luz;
     }
 
-    public function execute()
+    public function executar()
     {
-        $this->bulb->turnOn();
+        $this->luz->ligar();
     }
 
-    public function undo()
+    public function desfazer()
     {
-        $this->bulb->turnOff();
+        $this->luz->desligar();
     }
 
-    public function redo()
+    public function refazer()
     {
-        $this->execute();
+        $this->executar();
     }
 }
 
-class TurnOff implements Command
+class Desligar implements Commando
 {
-    protected $bulb;
+    protected $luz;
 
-    public function __construct(Bulb $bulb)
+    public function __construct(Luz $luz)
     {
-        $this->bulb = $bulb;
+        $this->luz = $luz;
     }
 
-    public function execute()
+    public function executar()
     {
-        $this->bulb->turnOff();
+        $this->luz->desligar();
     }
 
-    public function undo()
+    public function desfazer()
     {
-        $this->bulb->turnOn();
+        $this->luz->ligar();
     }
 
-    public function redo()
+    public function refazer()
     {
-        $this->execute();
+        $this->executar();
     }
 }
 ```
-Then we have an `Invoker` with whom the client will interact to process any commands
+
+Então temos o `Invocador`, com quem o cliente vai interagir para executar quaisquer comandos.
+
 ```php
-// Invoker
-class RemoteControl
+// Invocador
+class ControleRemoto
 {
-    public function submit(Command $command)
+    public function enviar(Comando $comando)
     {
-        $command->execute();
+        $comando->executar();
     }
 }
 ```
-Finally let's see how we can use it in our client
+
+Agora podemos usar assim:
+
 ```php
-$bulb = new Bulb();
+$luz = new Luz();
 
-$turnOn = new TurnOn($bulb);
-$turnOff = new TurnOff($bulb);
+$ligar = new Ligar($luz);
+$desligar = new Desligar($luz);
 
-$remote = new RemoteControl();
-$remote->submit($turnOn); // Bulb has been lit!
-$remote->submit($turnOff); // Darkness!
+$remote = new ControleRemoto();
+$remote->enviar($ligar); // A Luz foi acessa
+$remote->enviar($desligar); // Escuridão!
 ```
 
-Command pattern can also be used to implement a transaction based system. Where you keep maintaining the history of commands as soon as you execute them. If the final command is successfully executed, all good otherwise just iterate through the history and keep executing the `undo` on all the executed commands.
+O padrão comando também é usado para implementar sistemas baseados em transações. Aonde você mantém um histórico de comandos que foram executados a medida que você os roda. Se o comando final for executado com sucesso, então está tudo ok, mas caso um dos comandos dê errado, então basta iterar pelo histórico executando o método `desfazer` em cada comando executado.
 
-➿ Iterator
+Outra aplicação do padrão comando é para sistemas aonde você possui plugins ou comandos externos que podem ser criados pelos usuários do sistema. Por exemplo, imagine que você possua um sistema de controle remoto de determinada plataforma, existem várias ações que o usuário pode executar, e outras ações podem ser adicionadas no futuro. Desta forma é necessário ter uma aplicação cliente que envia o nome da ação e seus parâmetros para o `invocador`, que é uma classe presente juntamente com a plataforma que será controlada, desta forma este invocador pode instanciar o comando enviado e executar qualquer lógica interna, retornando o resultado para o `cliente` no final do processo. Caso seja necessário adicionar uma nova ação, basta que um novo arquivo seja criado implementando a interface de comandos. Note que neste modelo, não é necessário implementar as funções para histórico transacional.
+
+<a name="iterador"></a>➿ Iterador
 --------
 
-Real world example
-> An old radio set will be a good example of iterator, where user could start at some channel and then use next or previous buttons to go through the respective channels. Or take an example of MP3 player or a TV set where you could press the next and previous buttons to go through the consecutive channels or in other words they all provide an interface to iterate through the respective channels, songs or radio stations.  
+Exemplo do mundo real:
 
-In plain words
-> It presents a way to access the elements of an object without exposing the underlying presentation.
+> Um rádio antigo é um ótimo exemplo de iterador, onde o usuário pode começar em alguma estação e usar os botões "próximo" ou "anterior" para avançar ou voltar as respectivas estações. Ou também o exemplo de um MP3 Player ou uma TV aonde você pode utilizar os mesmos botões para avançar ou voltar os canais ou músicas consecutivas. Em outras palavras, todos eles provêm interfaces para iterar através dos canais. 
 
-Wikipedia says
-> In object-oriented programming, the iterator pattern is a design pattern in which an iterator is used to traverse a container and access the container's elements. The iterator pattern decouples algorithms from containers; in some cases, algorithms are necessarily container-specific and thus cannot be decoupled.
+Em palavras simples:
 
-**Programmatic example**
+> Apresenta uma maneira de acessar elementos de um objeto sem expor a apresentação interna do mesmo.
 
-In PHP it is quite easy to implement using SPL (Standard PHP Library). Translating our radio stations example from above. First of all we have `RadioStation`
+Wikipédia diz:
+
+> Em POO, o padrão iterador é um padrão de projeto no qual um iterador é usado para transpor um container e acessar seus elementos. Este padrão desacopla os algoritmos de seus containers; em alguns casos, os algoritmos são específicos dos containers e, portanto, não podem ser desacoplados.
+
+**Exemplo programático**
+
+No PHP isso é muito simples de fazer usando a SPL (Standard PHP Library). Traduzindo nosso exemplo com rádio. Primeiramente temos nossa classe de `EstacaoRadio`:
 
 ```php
-class RadioStation
+class EstacaoRadio
 {
-    protected $frequency;
+    protected $frequencia;
 
-    public function __construct(float $frequency)
+    public function __construct(float $frequencia)
     {
-        $this->frequency = $frequency;
+        $this->frequencia = $frequencia;
     }
 
-    public function getFrequency(): float
+    public function obterFrequencia(): float
     {
-        return $this->frequency;
+        return $this->frequencia;
     }
 }
 ```
-Then we have our iterator
+
+Então temos nosso iterador:
 
 ```php
 use Countable;
 use Iterator;
 
-class StationList implements Countable, Iterator
+class ListaEstacoes implements Countable, Iterator
 {
-    /** @var RadioStation[] $stations */
-    protected $stations = [];
+    /** @var EstacaoRadio[] $estacoes */
+    protected $estacoes = [];
 
     /** @var int $counter */
     protected $counter;
 
-    public function addStation(RadioStation $station)
+    public function adicionarEstacao(EstacaoRadio $estacao)
     {
-        $this->stations[] = $station;
+        $this->estacoes[] = $estacao;
     }
 
-    public function removeStation(RadioStation $toRemove)
+    public function removerEstacao(EstacaoRadio $aRemover)
     {
-        $toRemoveFrequency = $toRemove->getFrequency();
-        $this->stations = array_filter($this->stations, function (RadioStation $station) use ($toRemoveFrequency) {
-            return $station->getFrequency() !== $toRemoveFrequency;
+        $aRemoverFrequencia = $aRemover->obterFrequencia();
+        $this->estacoes = array_filter($this->estacoes, function (EstacaoRadio $estacao) use ($aRemoverFrequencia) {
+            return $estacao->obterFrequencia() !== $aRemoverFrequencia;
         });
     }
 
     public function count(): int
     {
-        return count($this->stations);
+        return count($this->estacoes);
     }
 
-    public function current(): RadioStation
+    public function current(): EstacaoRadio
     {
-        return $this->stations[$this->counter];
+        return $this->estacoes[$this->counter];
     }
 
     public function key()
@@ -1577,706 +1658,778 @@ class StationList implements Countable, Iterator
 
     public function valid(): bool
     {
-        return isset($this->stations[$this->counter]);
+        return isset($this->estacoes[$this->counter]);
     }
 }
 ```
-And then it can be used as
+
+Então usamos como:
+
 ```php
-$stationList = new StationList();
+$listaEstacoes = new ListaEstacoes();
 
-$stationList->addStation(new RadioStation(89));
-$stationList->addStation(new RadioStation(101));
-$stationList->addStation(new RadioStation(102));
-$stationList->addStation(new RadioStation(103.2));
+$listaEstacoes->adicionarEstacao(new EstacaoRadio(89));
+$listaEstacoes->adicionarEstacao(new EstacaoRadio(101));
+$listaEstacoes->adicionarEstacao(new EstacaoRadio(102));
+$listaEstacoes->adicionarEstacao(new EstacaoRadio(103.2));
 
-foreach($stationList as $station) {
-    echo $station->getFrequency() . PHP_EOL;
+foreach($listaEstacoes as $estacao) {
+    echo $estacao->obterFrequencia() . PHP_EOL;
 }
 
-$stationList->removeStation(new RadioStation(89)); // Will remove station 89
+$listaEstacoes->removerEstacao(new EstacaoRadio(89)); // Vai remover a estação 89
 ```
 
-👽 Mediator
+<a name="mediador"></a>👽 Mediador
 ========
 
-Real world example
-> A general example would be when you talk to someone on your mobile phone, there is a network provider sitting between you and them and your conversation goes through it instead of being directly sent. In this case network provider is mediator.
+Exemplo do mundo real:
 
-In plain words
-> Mediator pattern adds a third party object (called mediator) to control the interaction between two objects (called colleagues). It helps reduce the coupling between the classes communicating with each other. Because now they don't need to have the knowledge of each other's implementation.
+> Um exemplo geral seria quando você conversa com alguém no seu celular, existe um provedor de rede entre você e a pessoa, e sua conversa passa por este provedor ao invés de ser enviada diretamente. Neste caso, o provedor de rede é o mediador.
 
-Wikipedia says
-> In software engineering, the mediator pattern defines an object that encapsulates how a set of objects interact. This pattern is considered to be a behavioral pattern due to the way it can alter the program's running behavior.
+Em palavras simples:
 
-**Programmatic Example**
+> O padrão mediador adiciona um objeto terceiro (chamado de mediador) para controlar a interação entre dois objetos (chamados de colegas). Ajuda a reduzir o acoplamento entre as partes que se comunicam entre si, pois cada uma não precisa ter o conhecimento da implementação da outra.
 
-Here is the simplest example of a chat room (i.e. mediator) with users (i.e. colleagues) sending messages to each other.
+Wikipédia diz:
 
-First of all, we have the mediator i.e. the chat room
+> Em engenharia de software, o padrão mediador define um objeto que encapsula como uma série de objetos deve interagir. Este padrão é considerado como um padrão comportamental devido ao modo como ele pode alterar o comportamento de execução do programa.
+
+**Exemplo programático**
+
+Aqui está o exemplo mais simples possível de uma sala de chat (mediador) e seus usuáriso (colegas) enviando mensagens um ao outro.
+
+Primeiramento temos nosso mediador:
 
 ```php
-interface ChatRoomMediator 
+interface MediadorSalaChat 
 {
-    public function showMessage(User $user, string $message);
+    public function mostrarMensagem(Usuario $usuario, string $mensagem);
 }
 
-// Mediator
-class ChatRoom implements ChatRoomMediator
+// Mediador
+class SalaChat implements MediadorSalaChat
 {
-    public function showMessage(User $user, string $message)
+    public function mostrarMensagem(Usuario $usuario, string $mensagem)
     {
-        $time = date('M d, y H:i');
-        $sender = $user->getName();
+        $hora = date('M d, y H:i');
+        $remetente = $usuario->obterNome();
 
-        echo $time . '[' . $sender . ']:' . $message;
+        echo $hora . '[' . $remetente . ']:' . $mensagem;
     }
 }
 ```
 
-Then we have our users i.e. colleagues
+Então temos a implementação dos nossos usuários (os colegas):
+
 ```php
-class User {
-    protected $name;
-    protected $chatMediator;
+class Usuario {
+    protected $nome;
+    protected $mediador;
 
-    public function __construct(string $name, ChatRoomMediator $chatMediator) {
-        $this->name = $name;
-        $this->chatMediator = $chatMediator;
+    public function __construct(string $nome, MediadorSalaChat $mediador) {
+        $this->nome = $nome;
+        $this->mediador = $mediador;
     }
 
-    public function getName() {
-        return $this->name;
+    public function obterNome() {
+        return $this->nome;
     }
 
-    public function send($message) {
-        $this->chatMediator->showMessage($this, $message);
+    public function enviar($mensagem) {
+        $this->mediador->mostrarMensagem($this, $mensagem);
     }
 }
 ```
-And the usage
+
+E o uso real:
+
 ```php
 $mediator = new ChatRoom();
 
-$john = new User('John Doe', $mediator);
-$jane = new User('Jane Doe', $mediator);
+$john = new Usuario('John Doe', $mediator);
+$jane = new Usuario('Jane Doe', $mediator);
 
-$john->send('Hi there!');
-$jane->send('Hey!');
+$john->enviar('Olá!');
+$jane->enviar('Hey!');
 
-// Output will be
-// Feb 14, 10:58 [John]: Hi there!
+// A saída vai ser
+// Feb 14, 10:58 [John]: Olá!
 // Feb 14, 10:58 [Jane]: Hey!
 ```
 
 💾 Memento
 -------
-Real world example
-> Take the example of calculator (i.e. originator), where whenever you perform some calculation the last calculation is saved in memory (i.e. memento) so that you can get back to it and maybe get it restored using some action buttons (i.e. caretaker).
 
-In plain words
-> Memento pattern is about capturing and storing the current state of an object in a manner that it can be restored later on in a smooth manner.
+Exemplo do mundo real:
 
-Wikipedia says
-> The memento pattern is a software design pattern that provides the ability to restore an object to its previous state (undo via rollback).
+> Vamos pegar o exemplo de uma calculadora (`Originador`), onde, sempre que você executa algum cálculo, o último cálculo é salvo na memória (`Memento`) para que você possa retornar a ele ou então restaurar o mesmo utilizando algum botão de ação (`Zelador`, ou `Caretaker`).
 
-Usually useful when you need to provide some sort of undo functionality.
+Em palavras simples:
 
-**Programmatic Example**
+> O Memento é um padrão que diz respeito a capturar e guardar o estado atual de um objeto de uma maneira que ele possa ser restaurado depois de uma maneira suave.
 
-Lets take an example of text editor which keeps saving the state from time to time and that you can restore if you want.
+Wikipédia diz:
 
-First of all we have our memento object that will be able to hold the editor state
+> O padrão memento, é um padrão de desenvolvimento de software que provê a habilidade de restaurar um objeto a seu estado anterior (desfazer via rollback).
+
+É geralmente útil quando você precisa alguma funcionalidade do tipo `desfazer`.
+
+**Exemplo programático**
+
+Vamos pegar um exemplo de um editor de texto que salva o estado do texto de tempos em tempos, e o usuário pode restaurar esse estado se ele preferir.
+
+Primeiramente, vamos criar nosso objeto Memento, que vai ser o artefato que vai guardar o estado do editor.
 
 ```php
 class EditorMemento
 {
-    protected $content;
+    protected $conteudo;
 
-    public function __construct(string $content)
+    public function __construct(string $conteudo)
     {
-        $this->content = $content;
+        $this->conteudo = $conteudo;
     }
 
-    public function getContent()
+    public function obterConteudo()
     {
-        return $this->content;
+        return $this->conteudo;
     }
 }
 ```
 
-Then we have our editor i.e. originator that is going to use memento object
+Então temos nosso objeto originador (o editor de texto), que vai utilizar o memento:
 
 ```php
 class Editor
 {
-    protected $content = '';
+    protected $conteudo = '';
 
-    public function type(string $words)
+    public function digitar(string $palavras)
     {
-        $this->content = $this->content . ' ' . $words;
+        $this->conteudo = $this->conteudo . ' ' . $palavras;
     }
 
-    public function getContent()
+    public function obterConteudo()
     {
-        return $this->content;
+        return $this->conteudo;
     }
 
-    public function save()
+    public function salvar()
     {
-        return new EditorMemento($this->content);
+        return new EditorMemento($this->conteudo);
     }
 
-    public function restore(EditorMemento $memento)
+    public function restaurar(EditorMemento $memento)
     {
-        $this->content = $memento->getContent();
+        $this->conteudo = $memento->obterConteudo();
     }
 }
 ```
 
-And then it can be used as
+Então podemos utilizar:
 
 ```php
 $editor = new Editor();
 
-// Type some stuff
-$editor->type('This is the first sentence.');
-$editor->type('This is second.');
+// digitamos alguma coisa
+$editor->digitar('Esta é a primeira frase.');
+$editor->digitar('Esta é a segunda.');
 
-// Save the state to restore to : This is the first sentence. This is second.
-$saved = $editor->save();
+// Salvamos o estado para que possamos retornar: Esta é a primeira frase. Esta é a segunda.
+$salvo = $editor->salvar();
 
-// Type some more
-$editor->type('And this is third.');
+// digitamos mais alguma coisa
+$editor->digitar('E esta é a terceira.');
 
-// Output: Content before Saving
-echo $editor->getContent(); // This is the first sentence. This is second. And this is third.
+// Saída antes de salvarmos
+echo $editor->obterConteudo(); // Esta é a primeira frase. Esta é a segunda. E esta é a terceira.
 
-// Restoring to last saved state
-$editor->restore($saved);
+// Restaurando para o ultimo estado salvo
+$editor->restaurar($salvo);
 
-$editor->getContent(); // This is the first sentence. This is second.
+$editor->obterConteudo(); // Esta é a primeira frase. Esta é a segunda.
 ```
 
-😎 Observer
+<a name="observador"></a>😎 Observador
 --------
-Real world example
-> A good example would be the job seekers where they subscribe to some job posting site and they are notified whenever there is a matching job opportunity.   
 
-In plain words
-> Defines a dependency between objects so that whenever an object changes its state, all its dependents are notified.
+Exemplo do mundo real:
 
-Wikipedia says
-> The observer pattern is a software design pattern in which an object, called the subject, maintains a list of its dependents, called observers, and notifies them automatically of any state changes, usually by calling one of their methods.
+> Um bom exemplo deste padrão seriam pessoas procurando anuncios de emprego. Elas se inscreveriam em algum site de vagas e seriam notificados sempre que houvesse uma vaga compatível.
 
-**Programmatic example**
+Em palavras simples:
 
-Translating our example from above. First of all we have job seekers that need to be notified for a job posting
+> Define uma dependencia entre objetos para que, quando um deles for alterado, notificar todos os seus dependentes.
+
+Wikipédia diz:
+
+> O padrão observador é um padrão de desenvolvimento de software onde um objeto, chamado de sujeito, mantém uma lista de todos os seus dependentes, chamados de observadores, e os notifica automaticamente qualquer alteração de estado, geralmente chamando algum método específico dos observadores.
+
+**Exemplo programático**
+
+Traduzindo nosso exemplo acima. Primeiramente tempos nossas pessoas procurando vagas de emprego, que precisam ser notificadas (`Observadores`).
+
 ```php
-class JobPost
+class VagaEmprego
 {
-    protected $title;
+    protected $titulo;
 
-    public function __construct(string $title)
+    public function __construct(string $titulo)
     {
-        $this->title = $title;
+        $this->titulo = $titulo;
     }
 
-    public function getTitle()
+    public function obterTitulo()
     {
-        return $this->title;
+        return $this->titulo;
     }
 }
 
-class JobSeeker implements Observer
+class Candidato implements Observer
 {
-    protected $name;
+    protected $nome;
 
-    public function __construct(string $name)
+    public function __construct(string $nome)
     {
-        $this->name = $name;
+        $this->nome = $nome;
     }
 
-    public function onJobPosted(JobPost $job)
+    public function onVagaPostada(VagaEmprego $vaga)
     {
         // Do something with the job posting
-        echo 'Hi ' . $this->name . '! New job posted: '. $job->getTitle();
+        echo 'Olá ' . $this->nome . '! Nova vaga postada: '. $vaga->obterTitulo();
     }
 }
 ```
-Then we have our job postings to which the job seekers will subscribe
-```php
-class JobPostings implements Observable
-{
-    protected $observers = [];
 
-    protected function notify(JobPost $jobPosting)
+Então temos nossas listas de vagas, a qual os nossos candidatos vão se inscrever.
+
+```php
+class Vagas implements Observable
+{
+    protected $observadores = [];
+
+    protected function notificar(VagaEmprego $vaga)
     {
-        foreach ($this->observers as $observer) {
-            $observer->onJobPosted($jobPosting);
+        foreach ($this->observadores as $observador) {
+            $observador->onVagaPostada($vaga);
         }
     }
 
-    public function attach(Observer $observer)
+    public function inscrever(Observer $observador)
     {
-        $this->observers[] = $observer;
+        $this->observadores[] = $observador;
     }
 
-    public function addJob(JobPost $jobPosting)
+    public function adicionarVaga(VagaEmprego $vaga)
     {
-        $this->notify($jobPosting);
+        $this->notificar($vaga);
     }
 }
 ```
-Then it can be used as
+
+Então usamos como:
+
 ```php
-// Create subscribers
-$johnDoe = new JobSeeker('John Doe');
-$janeDoe = new JobSeeker('Jane Doe');
+// Criamos inscritos
+$johnDoe = new Candidato('John Doe');
+$janeDoe = new Candidato('Jane Doe');
 
-// Create publisher and attach subscribers
-$jobPostings = new JobPostings();
-$jobPostings->attach($johnDoe);
-$jobPostings->attach($janeDoe);
+// Criamos o publicador e inscrevemos os candidatos
+$vagas = new Vagas();
+$vagas->inscrever($johnDoe);
+$vagas->inscrever($janeDoe);
 
-// Add a new job and see if subscribers get notified
-$jobPostings->addJob(new JobPost('Software Engineer'));
+// Adicionamos uma nova vaga e notificamos os candidatos
+$vagas->adicionarVaga(new VagaEmprego('Engenheiro de software'));
 
-// Output
-// Hi John Doe! New job posted: Software Engineer
-// Hi Jane Doe! New job posted: Software Engineer
+// Saída
+// Olá John Doe! Nova vaga psotada: Engenheiro de software
+// Olá Jane Doe! Nova vaga psotada: Engenheiro de software
 ```
 
-🏃 Visitor
+<a name="visitante"></a>🏃 Visitante
 -------
-Real world example
-> Consider someone visiting Dubai. They just need a way (i.e. visa) to enter Dubai. After arrival, they can come and visit any place in Dubai on their own without having to ask for permission or to do some leg work in order to visit any place here; just let them know of a place and they can visit it. Visitor pattern lets you do just that, it helps you add places to visit so that they can visit as much as they can without having to do any legwork.
 
-In plain words
-> Visitor pattern lets you add further operations to objects without having to modify them.
+Exemplo do mundo real:
 
-Wikipedia says
-> In object-oriented programming and software engineering, the visitor design pattern is a way of separating an algorithm from an object structure on which it operates. A practical result of this separation is the ability to add new operations to existing object structures without modifying those structures. It is one way to follow the open/closed principle.
+> Considere alguém visitando Dubai. Eles só precisam de uma passagem (Visto) para entrar em Dubai. Depois de chegarem, eles podem entrar e visitar qualquer lugar da cidade por conta própria, sem precisar pedir permissão. Eles só precisam conhecer o local para poder ir até ele e visitá-lo. O padrão visitante permite que você faça justamente isso, ajuda a adicionar novos lugares para o visitante visitar sem que eles precisem fazer algum trabalho extra.
 
-**Programmatic example**
+Em palavras simples:
 
-Let's take an example of a zoo simulation where we have several different kinds of animals and we have to make them Sound. Let's translate this using visitor pattern
+> O padrão visitante permite que você adicione novas operações em objetos sem ter de modifica-los.
+
+Wikipédia diz:
+
+> Em POO e engenharia de software, o padrão de projetos visitante é uma maneira de separar um algoritmo da estrutura da qual ele opera. Um resultado prático desta separação é a habilidade de adicionar novas operações para objetos e estruturas existentes sem ter de modificar tais estruturas. É uma maneira de seguir o principio de abertura/fechamento.
+
+**Exemplo programático**
+
+Vamos pegar o exemplo de um zoológico, aonde temos diversos tipos de animais e temos que faze-los emitir algum tipo de som:
 
 ```php
-// Visitee
+// Visitado
 interface Animal
 {
-    public function accept(AnimalOperation $operation);
+    public function executarAcao(AcaoAnimal $operation);
 }
 
 // Visitor
-interface AnimalOperation
+interface AcaoAnimal
 {
-    public function visitMonkey(Monkey $monkey);
-    public function visitLion(Lion $lion);
-    public function visitDolphin(Dolphin $dolphin);
+    public function visitarMacaco(Macaco $macaco);
+    public function visitarLeao(Leao $leao);
+    public function visitarGolfinho(Golfinho $golfinho);
 }
 ```
 Then we have our implementations for the animals
 ```php
-class Monkey implements Animal
+class Macaco implements Animal
 {
-    public function shout()
+    public function gritar()
     {
         echo 'Ooh oo aa aa!';
     }
 
-    public function accept(AnimalOperation $operation)
+    public function accept(AcaoAnimal $operation)
     {
-        $operation->visitMonkey($this);
+        $operation->visitarMacaco($this);
     }
 }
 
-class Lion implements Animal
+class Leao implements Animal
 {
-    public function roar()
+    public function rugir()
     {
         echo 'Roaaar!';
     }
 
-    public function accept(AnimalOperation $operation)
+    public function accept(AcaoAnimal $operation)
     {
-        $operation->visitLion($this);
+        $operation->visitarLeao($this);
     }
 }
 
-class Dolphin implements Animal
+class Golfinho implements Animal
 {
-    public function speak()
+    public function falar()
     {
         echo 'Tuut tuttu tuutt!';
     }
 
-    public function accept(AnimalOperation $operation)
+    public function executarAcao(AcaoAnimal $operation)
     {
-        $operation->visitDolphin($this);
+        $operation->visitarGolfinho($this);
     }
 }
 ```
-Let's implement our visitor
+Vamos implementar nosso visitante, que será a ação que o animal pode fazer:
+
 ```php
-class Speak implements AnimalOperation
+class Falar implements AcaoAnimal
 {
-    public function visitMonkey(Monkey $monkey)
+    public function visitarMacaco(Macaco $macaco)
     {
-        $monkey->shout();
+        $macaco->gritar();
     }
 
-    public function visitLion(Lion $lion)
+    public function visitarLeao(Leao $leao)
     {
-        $lion->roar();
+        $leao->rugir();
     }
 
-    public function visitDolphin(Dolphin $dolphin)
+    public function visitarGolfinho(Golfinho $golfinho)
     {
-        $dolphin->speak();
+        $golfinho->falar();
     }
 }
 ```
 
 And then it can be used as
 ```php
-$monkey = new Monkey();
-$lion = new Lion();
-$dolphin = new Dolphin();
+$macaco = new Macaco();
+$leao = new Leao();
+$golfinho = new Golfinho();
 
-$speak = new Speak();
+$acaoFala = new Falar();
 
-$monkey->accept($speak);    // Ooh oo aa aa!    
-$lion->accept($speak);      // Roaaar!
-$dolphin->accept($speak);   // Tuut tutt tuutt!
+$macaco->executarAcao($acaoFala);    // Ooh oo aa aa!    
+$leao->executarAcao($acaoFala);      // Roaaar!
+$golfinho->executarAcao($acaoFala);   // Tuut tutt tuutt!
 ```
-We could have done this simply by having an inheritance hierarchy for the animals but then we would have to modify the animals whenever we would have to add new actions to animals. But now we will not have to change them. For example, let's say we are asked to add the jump behavior to the animals, we can simply add that by creating a new visitor i.e.
+
+Poderíamos ter feito isso também por simples hierarquia de herança, mas ai sempre que quisessemos adicionar uma nova ação ao animal, teríamos que modificar o objeto animal em si. Vamos, por exemplo, adicionar um novo comportamento, que é o de pular, podemos fazer isso criando um novo visitante:
 
 ```php
-class Jump implements AnimalOperation
+class Pulo implements AcaoAnimal
 {
-    public function visitMonkey(Monkey $monkey)
+    public function visitarMacaco(Macaco $macaco)
     {
-        echo 'Jumped 20 feet high! on to the tree!';
+        echo 'Pulou 6 metros para uma árvore!';
     }
 
-    public function visitLion(Lion $lion)
+    public function visitarLeao(Leao $leao)
     {
-        echo 'Jumped 7 feet! Back on the ground!';
+        echo 'Pulou 7 metros e voltou para o chão!';
     }
 
-    public function visitDolphin(Dolphin $dolphin)
+    public function visitarGolfinho(Golfinho $golfinho)
     {
-        echo 'Walked on water a little and disappeared';
+        echo 'Pulou sobre a água e depois desapareceu';
     }
 }
 ```
-And for the usage
+
+E então podemos executar:
+
 ```php
-$jump = new Jump();
+$pular = new Pulo();
 
-$monkey->accept($speak);   // Ooh oo aa aa!
-$monkey->accept($jump);    // Jumped 20 feet high! on to the tree!
+$macaco->executarAcao($acaoFala);   // Ooh oo aa aa!
+$macaco->executarAcao($pular);    // Pulou 6 metros para uma árvore!
 
-$lion->accept($speak);     // Roaaar!
-$lion->accept($jump);      // Jumped 7 feet! Back on the ground!
+$leao->executarAcao($acaoFala);     // Roaaar!
+$leao->executarAcao($pular);      // Pulou 7 metros e voltou para o chão!
 
-$dolphin->accept($speak);  // Tuut tutt tuutt!
-$dolphin->accept($jump);   // Walked on water a little and disappeared
+$golfinho->executarAcao($acaoFala);  // Tuut tutt tuutt!
+$golfinho->executarAcao($pular);   // Pulou sobre a água e depois desapareceu
 ```
 
-💡 Strategy
+<a name="estrategia"></a>💡 Estratégia
 --------
 
-Real world example
-> Consider the example of sorting, we implemented bubble sort but the data started to grow and bubble sort started getting very slow. In order to tackle this we implemented Quick sort. But now although the quick sort algorithm was doing better for large datasets, it was very slow for smaller datasets. In order to handle this we implemented a strategy where for small datasets, bubble sort will be used and for larger, quick sort.
+Exemplo do mundo real:
 
-In plain words
-> Strategy pattern allows you to switch the algorithm or strategy based upon the situation.
+> O exemplo mais comum é a ordenação em vetores. Implementamos o _bubble sort_ mas os dados começaram a ficar grandes demais e o _bubble sort_ já não era mais o melhor algoritmo para ordenação, começou a ficar muito lento. Para resolver este problema, implementamos o _Quick Sort_. Mas agora, apesar de que o algoritmo está se saindo melhor para grandes massas de dados, ele está muito devagar para datasets menores... Para lidar com isso vamos ter que implementar uma lógica de alteração de regras de ordenação dependendo do tamanho do vetor, para vetores menores vamos utilizar o _bubble sorting_ e para maiores o _quick sorting_.
 
-Wikipedia says
-> In computer programming, the strategy pattern (also known as the policy pattern) is a behavioural software design pattern that enables an algorithm's behavior to be selected at runtime.
+Em palavras simples:
 
-**Programmatic example**
+> O padrão estratégia permite que você altere o algoritmo que será executado baseado na situação.
 
-Translating our example from above. First of all we have our strategy interface and different strategy implementations
+Wikipédia diz:
+
+> Em programação de computadores, o padrão de projetos estratégia (também conhecido como padrão de política) é um padrão de projetos comportamental que permite que o comportamento de um algoritmo seja selecionado em tempo de execução.
+
+**Exemplo programático**
+
+Traduzindo o exemplo acima, primeiramente temos que criar nossas interface de estratégia, e todas as implementações de diferentes algoritmos:
 
 ```php
-interface SortStrategy
+interface EstrategiaOrdenacao
 {
-    public function sort(array $dataset): array;
+    public function ordenar(array $dataset): array;
 }
 
-class BubbleSortStrategy implements SortStrategy
+class EstrategiaBubbleSort implements EstrategiaOrdenacao
 {
-    public function sort(array $dataset): array
+    public function ordenar(array $dataset): array
     {
-        echo "Sorting using bubble sort";
+        echo "Ordenando usando bubble sort";
 
-        // Do sorting
+        // implementação do algoritmo
         return $dataset;
     }
 }
 
-class QuickSortStrategy implements SortStrategy
+class EstrategiaQuickSort implements EstrategiaOrdenacao
 {
-    public function sort(array $dataset): array
+    public function ordenar(array $dataset): array
     {
-        echo "Sorting using quick sort";
+        echo "Ordenando usando quick sort";
 
-        // Do sorting
+        // implementação do algoritmo
         return $dataset;
     }
 }
 ```
 
-And then we have our client that is going to use any strategy
-```php
-class Sorter
-{
-    protected $sorter;
+E agora temos o cliente que vai usar esses padrões:
 
-    public function __construct(SortStrategy $sorter)
+```php
+class Ordenador
+{
+    protected $algoritmo;
+
+    public function __construct(EstrategiaOrdenacao $algoritmo)
     {
-        $this->sorter = $sorter;
+        $this->algoritmo = $algoritmo;
     }
 
-    public function sort(array $dataset): array
+    public function ordenar(array $dataset): array
     {
-        return $this->sorter->sort($dataset);
+        return $this->algoritmo->ordenar($dataset);
     }
 }
 ```
-And it can be used as
+
+Então podemos usar da seguinte maneira:
+
 ```php
 $dataset = [1, 5, 4, 3, 2, 8];
 
-$sorter = new Sorter(new BubbleSortStrategy());
-$sorter->sort($dataset); // Output : Sorting using bubble sort
+$ordenador = new Ordenador(new EstrategiaBubbleSort());
+$ordenador->ordenar($dataset); // Saída: Ordenando usando bubble sort
 
-$sorter = new Sorter(new QuickSortStrategy());
-$sorter->sort($dataset); // Output : Sorting using quick sort
+$ordenador = new Ordenador(new EstrategiaQuickSort());
+$ordenador->ordenar($dataset); // Saída: Ordenando usando quick sort
 ```
 
-💢 State
+Podemos ir mais além na implementação e informar a lógica que queremos nestes usos:
+
+```php
+//Função para obter nossa estratégia
+function obterEstrategia(array $dataset) : EstrategiaOrdenacao {
+
+  if(count($dataset) > 1000) { //Regra do cliente
+    return new EstrategiaQuickSort;
+  }
+
+  return new EstrategiaBubbleSort;
+}
+
+$dataset = [1, 5, 4, 3, 2, 8]; //Vetor pequeno
+$ordenador = new Ordenador(obterEstrategia($dataset)); //Estratégia retornada será bubble sort
+$ordenador->ordenar($dataset); // Saída: Ordenando usando bubble sort
+
+$dataset = range(1,10000); //Vai produzir um vetor bem grande
+$ordenador = new Ordenador(obterEstrategia($dataset)); //A regra retornada será quick sort
+$ordenador->ordenar($dataset); // Saída: Ordenando usando quick sort
+```
+
+<a name="estado"></a>💢 Estado
 -----
-Real world example
-> Imagine you are using some drawing application, you choose the paint brush to draw. Now the brush changes its behavior based on the selected color i.e. if you have chosen red color it will draw in red, if blue then it will be in blue etc.  
 
-In plain words
-> It lets you change the behavior of a class when the state changes.
+Exemplo do mundo real:
 
-Wikipedia says
-> The state pattern is a behavioral software design pattern that implements a state machine in an object-oriented way. With the state pattern, a state machine is implemented by implementing each individual state as a derived class of the state pattern interface, and implementing state transitions by invoking methods defined by the pattern's superclass.
-> The state pattern can be interpreted as a strategy pattern which is able to switch the current strategy through invocations of methods defined in the pattern's interface.
+> Imagine que você está usando alguma aplicação de desenho, você escolhe a ferramenta de pincel. Agora, o pincel muda de comportamento de acordo com a cor, por exemplo, se você escolher o vermelho ele pintará em vermelho, se for azul então azul e assim por diante.
 
-**Programmatic example**
+Em palavras simples:
 
-Let's take an example of text editor, it lets you change the state of text that is typed i.e. if you have selected bold, it starts writing in bold, if italic then in italics etc.
+> Este padrão perite que você mude o comportamento da classe quando o estado muda.
 
-First of all we have our state interface and some state implementations
+Wikipédia diz:
+
+> O padrão estado é um padrão comportamental de desenvolvimento de software que implementa uma máquina de estados de uma forma orientada a objetos. Com o padrão estado, a máquina de estados é implementada adicionando cada um dos estados como uma classe derivada da interface de estados, e implementamos as transições de estado invocando os métodos definidos pela superclasse.
+
+> O padrão estado pode ser interpretado como um padrão estratégia que pode alterar o algoritmo corrente através de invocações de métodos definidos na interface do padrão.
+
+**Exemplo programático**
+
+Vamos pegar o exemplo de um editor de texto novamente, mas desta vez vamos imaginar que ele permite que você mude o estado do texto que está sendo digitado, por exemplo, se você selecionar negrito ele vai escrever em negrito, se for italico, então vai aplicar o estilo correspondente.
+
+Vamos começar implementando a interface de estado e algumas implementações dela:
 
 ```php
-interface WritingState
+interface EstadoEscrita
 {
-    public function write(string $words);
+    public function escrever(string $palavras);
 }
 
-class UpperCase implements WritingState
+class CaixaAlta implements EstadoEscrita
 {
-    public function write(string $words)
+    public function escrever(string $palavras)
     {
-        echo strtoupper($words);
+        echo strtoupper($palavras);
     }
 }
 
-class LowerCase implements WritingState
+class CaixaBaixa implements EstadoEscrita
 {
-    public function write(string $words)
+    public function escrever(string $palavras)
     {
-        echo strtolower($words);
+        echo strtolower($palavras);
     }
 }
 
-class Default implements WritingState
+class Padrao implements EstadoEscrita
 {
-    public function write(string $words)
+    public function escrever(string $palavras)
     {
-        echo $words;
+        echo $palavras;
     }
 }
 ```
-Then we have our editor
+
+Então temos nosso editor:
+
 ```php
-class TextEditor
+class EditorTexto
 {
-    protected $state;
+    protected $estado;
 
-    public function __construct(WritingState $state)
+    public function __construct(EstadoEscrita $estado)
     {
-        $this->state = $state;
+        $this->state = $estado;
     }
 
-    public function setState(WritingState $state)
+    public function setarEstado(EstadoEscrita $estado)
     {
-        $this->state = $state;
+        $this->state = $estado;
     }
 
-    public function type(string $words)
+    public function digitar(string $palavras)
     {
-        $this->state->write($words);
+        $this->state->escrever($palavras);
     }
 }
 ```
-And then it can be used as
+
+Então podemos usar assim:
+
 ```php
-$editor = new TextEditor(new Default());
+$editor = new EditorTexto(new Padrao());
 
-$editor->type('First line');
+$editor->digitar('Primeira Linha');
 
-$editor->setState(new UpperCase());
+$editor->setarEstado(new CaixaAlta());
 
-$editor->type('Second line');
-$editor->type('Third line');
+$editor->digitar('Segunda Linha');
+$editor->digitar('Terceira Linha');
 
-$editor->setState(new LowerCase());
+$editor->setarEstado(new CaixaBaixa());
 
-$editor->type('Fourth line');
-$editor->type('Fifth line');
+$editor->digitar('Quarta linha');
+$editor->digitar('Quinta linha');
 
-// Output:
-// First line
-// SECOND LINE
-// THIRD LINE
-// fourth line
-// fifth line
+// Saída:
+// Primeira Linha
+// SEGUNDA LINHA
+// TERCEIRA LINHA
+// quarta linha
+// quinta linha
 ```
 
-📒 Template Method
+<a name="template"></a>📒 Método Modelo
 ---------------
 
-Real world example
-> Suppose we are getting some house built. The steps for building might look like
-> - Prepare the base of house
-> - Build the walls
-> - Add roof
-> - Add other floors
+Exemplo do mundo real:
+> Suponha que temos que construir uma casa. Existem passos para isso, e esses passos são mais ou menos assim:
+> - Preparar a fundação
+> - Construir as paredes
+> - Adicionar o telhado
+> - Adicionar outros pisos
 
-> The order of these steps could never be changed i.e. you can't build the roof before building the walls etc but each of the steps could be modified for example walls can be made of wood or polyester or stone.
+> A ordem destes passos nunca pode ser mudada, por exemplo, você não pode construir o telhado antes de construir as paredes, mas cada passo pode ser modificado, por exemplo, as paredes podem ser feitas de alvenaria, pedra, madeira.
 
-In plain words
-> Template method defines the skeleton of how a certain algorithm could be performed, but defers the implementation of those steps to the children classes.
+Em palavras simples:
+> O método modelo define um esqueleto de _como_ um certo algoritmo pode ser executado, mas delega a implementação destes passos para as classes filhas.
 
-Wikipedia says
-> In software engineering, the template method pattern is a behavioral design pattern that defines the program skeleton of an algorithm in an operation, deferring some steps to subclasses. It lets one redefine certain steps of an algorithm without changing the algorithm's structure.
+Wikipédia diz:
+> Em engenharia de software, o método modelo é um padrão de projetos comportamental que define o esqueleto programático de um algoritmo em uma operação, delegando alguns passos para suas subclasses. Permite que certos passos sejam redefinidos pela subclasses sem alterar a estrutura do algoritmo em si.
 
-**Programmatic Example**
+**Exemplo programático**
 
-Imagine we have a build tool that helps us test, lint, build, generate build reports (i.e. code coverage reports, linting report etc) and deploy our app on the test server.
+Imagine que vamos construir uma ferramenta que permita que a gente gere, teste, gere relatórios de build (como cobertura e erros de sintaxe), linting e também faça deploy do nosso aplicativo para o servidor de testes.
 
-First of all we have our base class that specifies the skeleton for the build algorithm
+Primeiramente temos a nossa classe base que especifica esse esqueleto para o algoritmo:
+
 ```php
-abstract class Builder
+abstract class Construtor
 {
 
     // Template method
-    final public function build()
+    final public function construir()
     {
-        $this->test();
+        $this->testar();
         $this->lint();
-        $this->assemble();
+        $this->montar();
         $this->deploy();
     }
 
-    abstract public function test();
+    abstract public function testar();
     abstract public function lint();
-    abstract public function assemble();
+    abstract public function montar();
     abstract public function deploy();
 }
 ```
 
-Then we can have our implementations
+Então temosz nossas implementações
 
 ```php
-class AndroidBuilder extends Builder
+class ConstrutorAndroid extends Construtor
 {
-    public function test()
+    public function testar()
     {
-        echo 'Running android tests';
+        echo 'Executando testes no Android';
     }
 
     public function lint()
     {
-        echo 'Linting the android code';
+        echo 'Executando linting no Android';
     }
 
-    public function assemble()
+    public function montar()
     {
-        echo 'Assembling the android build';
+        echo 'Montando a build do Android';
     }
 
     public function deploy()
     {
-        echo 'Deploying android build to server';
+        echo 'Fazendo deploy para o servidor';
     }
 }
 
-class IosBuilder extends Builder
+class ConstrutorIos extends Construtor
 {
-    public function test()
+    public function testar()
     {
-        echo 'Running ios tests';
+        echo 'Executando testes no iOS';
     }
 
     public function lint()
     {
-        echo 'Linting the ios code';
+        echo 'Executando linting do iOS';
     }
 
-    public function assemble()
+    public function montar()
     {
-        echo 'Assembling the ios build';
+        echo 'Realizando a build do iOS';
     }
 
     public function deploy()
     {
-        echo 'Deploying ios build to server';
+        echo 'Fazendo deploy para o servidor';
     }
 }
 ```
-And then it can be used as
+Então podemos utilizar assim
 
 ```php
-$androidBuilder = new AndroidBuilder();
-$androidBuilder->build();
+$construtorAndroid = new ConstrutorAndroid();
+$construtorAndroid->construir();
 
-// Output:
-// Running android tests
-// Linting the android code
-// Assembling the android build
-// Deploying android build to server
+// Saída:
+// Executando testes no Android
+// Executando linting no android
+// Montando a build do Android
+// Fazendo deploy para o servidor
 
-$iosBuilder = new IosBuilder();
-$iosBuilder->build();
+$construtorIos = new ConstrutorIos();
+$construtorIos->construir();
 
-// Output:
-// Running ios tests
-// Linting the ios code
-// Assembling the ios build
-// Deploying ios build to server
+// Saída:
+// Executando testes no iOS
+// Executando linting do iOS
+// Realizando a build do iOS
+// Fazendo deploy para o servidor
 ```
 
-## 🚦 Wrap Up Folks
+## 🚦 Isso é tudo pessoal
 
-And that about wraps it up. I will continue to improve this, so you might want to watch/star this repository to revisit. Also, I have plans on writing the same about the architectural patterns, stay tuned for it.
+Basicamente creio que isto seja tudo, vamos continuar melhorando este guia, então você pode querer dar um watch/star no repositório para visitar novamente mais tarde. Estou com projetos também para escrever sobre padrões arquiteturais, então fique ligado!
 
-## 👬 Contribution
+## 👬 Contribuir
 
-- Report issues
-- Open pull request with improvements
-- Spread the word
-- Reach out to me directly at kamranahmed.se@gmail.com or on twitter [@kamranahmedse](http://twitter.com/kamranahmedse)
+- Reportar erros
+- Reportar erros de tradução
+- Abrir Pull Requests com melhorias
+- Espalhar a palavra
+- Fale com o autor diretamente em [kamranahmed.se@gmail.com](mailto:kamranahmed.se@gmail.com) ou no twitter [@kamranahmedse](http://twitter.com/kamranahmedse)
+- Fale com o tradutor diretamente em [lhs.santoss@gmail.com](mailto:lhs.santoss@gmail.com) ou no twitter [@_staticvoid](http://twitter.com/_staticvoid)
 
-## License
-MIT © [Kamran Ahmed](http://kamranahmed.info)
+## Licença
+
+MIT © [Kamran Ahmed](http://kamranahmed.info), tradução [Lucas Santos](http://lsantos.me)
+
+> Tradução feita de forma independente, sem nenhuma conexão com o autor.
