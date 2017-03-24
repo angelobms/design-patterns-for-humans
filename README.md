@@ -2216,84 +2216,88 @@ Wikipédia diz:
 
 **Exemplo programático**
 
-Let's take an example of text editor, it lets you change the state of text that is typed i.e. if you have selected bold, it starts writing in bold, if italic then in italics etc.
+Vamos pegar o exemplo de um editor de texto novamente, mas desta vez vamos imaginar que ele permite que você mude o estado do texto que está sendo digitado, por exemplo, se você selecionar negrito ele vai escrever em negrito, se for italico, então vai aplicar o estilo correspondente.
 
-First of all we have our state interface and some state implementations
+Vamos começar implementando a interface de estado e algumas implementações dela:
 
 ```php
-interface WritingState
+interface EstadoEscrita
 {
-    public function write(string $words);
+    public function escrever(string $palavras);
 }
 
-class UpperCase implements WritingState
+class CaixaAlta implements EstadoEscrita
 {
-    public function write(string $words)
+    public function escrever(string $palavras)
     {
-        echo strtoupper($words);
+        echo strtoupper($palavras);
     }
 }
 
-class LowerCase implements WritingState
+class CaixaBaixa implements EstadoEscrita
 {
-    public function write(string $words)
+    public function escrever(string $palavras)
     {
-        echo strtolower($words);
+        echo strtolower($palavras);
     }
 }
 
-class Default implements WritingState
+class Padrao implements EstadoEscrita
 {
-    public function write(string $words)
+    public function escrever(string $palavras)
     {
-        echo $words;
+        echo $palavras;
     }
 }
 ```
-Then we have our editor
+
+Então temos nosso editor:
+
 ```php
-class TextEditor
+class EditorTexto
 {
-    protected $state;
+    protected $estado;
 
-    public function __construct(WritingState $state)
+    public function __construct(EstadoEscrita $estado)
     {
-        $this->state = $state;
+        $this->state = $estado;
     }
 
-    public function setState(WritingState $state)
+    public function setarEstado(EstadoEscrita $estado)
     {
-        $this->state = $state;
+        $this->state = $estado;
     }
 
-    public function type(string $words)
+    public function digitar(string $palavras)
     {
-        $this->state->write($words);
+        $this->state->escrever($palavras);
     }
 }
 ```
-And then it can be used as
+
+Então podemos usar assim:
+
 ```php
-$editor = new TextEditor(new Default());
+$editor = new EditorTexto(new Padrao());
 
-$editor->type('First line');
+$editor->digitar('Primeira Linha');
 
-$editor->setState(new UpperCase());
+$editor->setarEstado(new CaixaAlta());
 
-$editor->type('Second line');
-$editor->type('Third line');
+$editor->digitar('Segunda Linha');
+$editor->digitar('Terceira Linha');
 
-$editor->setState(new LowerCase());
+$editor->setarEstado(new CaixaBaixa());
 
-$editor->type('Fourth line');
-$editor->type('Fifth line');
+$editor->digitar('Quarta linha');
+$editor->digitar('Quinta linha');
 
-// Output:
-// First line
-// SECOND LINE
-// THIRD LINE
-// fourth line
-// fifth line
+// Saída:
+// Primeira Linha
+// SEGUNDA LINHA
+// TERCEIRA LINHA
+// quarta linha
+// quinta linha
 ```
 
 <a name="template"></a>📒 Método Modelo
